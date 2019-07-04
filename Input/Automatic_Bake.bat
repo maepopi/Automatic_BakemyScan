@@ -8,9 +8,9 @@ for %%I in (%1) do set name=%%~nxI
 
 mkdir ..\Output\%name%
 
-set inPath=..\Input\%name%\%name%.fbx
+set inPath=..\Input\%name%\%name%.gltf
 
-set outPath=..\Output\%name%\%name%.obj
+set outPath=..\Output\%name%\%name%.gltf
 
 set colorPath=..\Input\%name%\%name%_diffuse.png
 

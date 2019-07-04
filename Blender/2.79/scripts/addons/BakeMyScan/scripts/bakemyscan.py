@@ -35,8 +35,8 @@ def get_args():
     parser = argparse.ArgumentParser(description="Remesh a scan to a lowpoly model in blender")
     parser.prog = "blender -b -P /path/to/bakemyscan.py"
 
-    parser.add_argument("input",  type=str, help="Input model (.fbx, .obj, .ply, .wrl, .x3d, .dae, .glb)")
-    parser.add_argument("output", type=str, help="Output model (.fbx, .obj, .ply, .glb)")
+    parser.add_argument("input",  type=str, help="Input model (.fbx, .obj, .ply, .wrl, .x3d, .dae, .glb ,.gltf)")
+    parser.add_argument("output", type=str, help="Output model (.fbx, .obj, .ply, .glb, .gltf)")
 
     parser.add_argument("-Z", "--zip", action="store_true", help="Compress the files into a .zip archive", default=False)
     parser.add_argument("-M", "--method", type=str, help=msg1, default="ITERATIVE")
@@ -81,8 +81,8 @@ def get_args():
                     sys.exit(4)
         return _file
 
-    args.input  = check_valid_file(args.input,  [".fbx", ".obj", ".ply", ".wrl", ".x3d", ".dae", ".stl", ".glb"])
-    args.output = check_valid_file(args.output, [".fbx", ".obj", ".ply", ".glb"], _can_create=True)
+    args.input  = check_valid_file(args.input,  [".fbx", ".obj", ".ply", ".wrl", ".x3d", ".dae", ".stl", ".glb",".gltf"])
+    args.output = check_valid_file(args.output, [".fbx", ".obj", ".ply", ".glb", ".gltf"], _can_create=True)
 
     args.color        = check_valid_file(args.color, _image=True)
     args.metallic     = check_valid_file(args.metallic, _image=True)

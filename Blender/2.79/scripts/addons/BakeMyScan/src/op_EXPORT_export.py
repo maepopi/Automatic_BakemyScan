@@ -11,7 +11,7 @@ class export(bpy.types.Operator, ExportHelper):
 
     filename_ext=".fbx"
     filter_glob = bpy.props.StringProperty(
-        default="*.fbx;*.obj;*.ply;*.gltf",
+        default="*.fbx;*.obj;*.ply;*.gltf;*.glb",
         # options={'HIDDEN'},
     )
 
@@ -78,7 +78,10 @@ class export(bpy.types.Operator, ExportHelper):
         elif self.filepath.endswith("ply"):
             bpy.ops.export_mesh.ply(filepath = self.filepath)
         elif self.filepath.endswith("gltf"):
-            bpy.ops.export_mesh.gltf(filepath=self.filepath)
+            bpy.ops.export_scene.gltf(filepath=self.filepath)
+
+        elif self.filepath.endswith("glb"):
+            bpy.ops.export_mesh.glb(filepath=self.filepath)
         else:
             print("File format not supported!")
             return {"CANCELLED"}
