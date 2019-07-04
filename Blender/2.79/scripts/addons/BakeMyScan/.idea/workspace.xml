@@ -2,9 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="124c7fd7-958f-408c-84c5-e2244b401624" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../../../../../Output/Inuit/Inuit.gltf.glb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../../Output/Inuit/Inuit_albedo.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../../Output/Inuit/Inuit_normal.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../../Input/Automatic_Bake.bat" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../../Input/Automatic_Bake.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../../Input/Inuit/Inuit.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../../Input/Inuit/Inuit.glb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../../Input/Inuit/Inuit.gltf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../../Output/Inuit/Inuit.glb" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../../Output/Inuit/Inuit.glb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../../Output/Inuit/Inuit_albedo.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../../Output/Inuit/Inuit_albedo.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../../Output/Inuit/Inuit_normal.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../../Output/Inuit/Inuit_normal.jpg" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,7 +21,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/scripts/bakemyscan.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
+            <state relative-caret-position="1241">
               <caret line="87" column="68" selection-start-line="87" selection-start-column="68" selection-end-line="87" selection-end-column="68" />
               <folding>
                 <element signature="e#859#869#0" expanded="true" />
@@ -29,7 +33,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/op_EXPORT_export.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="331">
+            <state relative-caret-position="1360">
               <caret line="83" column="31" selection-start-line="83" selection-start-column="31" selection-end-line="83" selection-end-column="31" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
@@ -39,19 +43,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../io_scene_gltf2/gltf2_export.py">
+        <entry file="file://$PROJECT_DIR$/../io_scene_gltf2/gltf2_generate.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="663">
-              <caret line="82" column="13" lean-forward="true" selection-start-line="82" selection-start-column="13" selection-end-line="82" selection-end-column="13" />
+            <state relative-caret-position="281">
+              <caret line="2398" column="66" selection-start-line="2398" selection-start-column="60" selection-end-line="2398" selection-end-column="66" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/../io_scene_gltf2/gltf2_generate.py">
+        <entry file="file://$PROJECT_DIR$/../testScript.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="1743" lean-forward="true" selection-start-line="1743" selection-end-line="1743" />
+            <state relative-caret-position="17">
+              <caret line="1" column="13" lean-forward="true" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -65,6 +69,11 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>export</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../../.." />
   </component>
@@ -75,10 +84,11 @@
         <option value="$PROJECT_DIR$/scripts/AutomaticProcess.py" />
         <option value="$PROJECT_DIR$/scripts/bakemyscan.py" />
         <option value="$PROJECT_DIR$/src/op_EXPORT_export.py" />
+        <option value="$PROJECT_DIR$/../testScript.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="580" />
     <option name="y" value="20" />
     <option name="width" value="1400" />
@@ -174,16 +184,6 @@
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/scripts/AutomaticProcess.py" />
-    <entry file="file://$PROJECT_DIR$/scripts/bakemyscan.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="87" column="68" selection-start-line="87" selection-start-column="68" selection-end-line="87" selection-end-column="68" />
-          <folding>
-            <element signature="e#859#869#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/fn_msh.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -215,16 +215,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/op_EXPORT_export.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="331">
-          <caret line="83" column="31" selection-start-line="83" selection-start-column="31" selection-end-line="83" selection-end-column="31" />
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -236,15 +226,42 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../io_scene_gltf2/gltf2_export.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="663">
+        <state relative-caret-position="1275">
           <caret line="82" column="13" lean-forward="true" selection-start-line="82" selection-start-column="13" selection-end-line="82" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/op_EXPORT_export.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1360">
+          <caret line="83" column="31" selection-start-line="83" selection-start-column="31" selection-end-line="83" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/bakemyscan.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1241">
+          <caret line="87" column="68" selection-start-line="87" selection-start-column="68" selection-end-line="87" selection-end-column="68" />
+          <folding>
+            <element signature="e#859#869#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../io_scene_gltf2/gltf2_generate.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="1743" lean-forward="true" selection-start-line="1743" selection-end-line="1743" />
+        <state relative-caret-position="281">
+          <caret line="2398" column="66" selection-start-line="2398" selection-start-column="60" selection-end-line="2398" selection-end-column="66" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../testScript.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="13" lean-forward="true" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
         </state>
       </provider>
     </entry>
