@@ -2,11 +2,15 @@ set blenderPath=Blender\blender.exe
 
 set bakeScriptPath=Blender\2.79\scripts\addons\BakeMyScan\scripts\bakemyscan.py
 
-set inPath=Input\Inuit.fbx
+set name=Inuit
 
-set outPath=Output\Inuit.obj
+mkdir Output\%name%
 
-set colorPath=Input\5000_Inuit_Texture_retouche.png
+set inPath=Input\%name%\%name%.fbx
+
+set outPath=Output\%name%\%name%.obj
+
+set colorPath=Input\%name%\%name%_diffuse.png
 
 set target=1500
 
@@ -16,6 +20,8 @@ set resolution=1024
 
 
 
-%blenderPath% -b -P %bakeScriptPath% -- %InPath% %outPath% -M %method% -X %target% -R %resolution% -c %colorPath%
+
+
+%blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %target% -R %resolution% -c %colorPath%
 
 pause
