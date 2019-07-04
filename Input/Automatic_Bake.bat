@@ -26,4 +26,6 @@ set resolution=1024
 
 %blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %target% -R %resolution% -c %colorPath%
 
+ren %outPath%.glb %name%.glb
+
 pause

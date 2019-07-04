@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="124c7fd7-958f-408c-84c5-e2244b401624" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../../../../../Automatic_Bake.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/bakemyscan.py" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/bakemyscan.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/op_EXPORT_export.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/op_EXPORT_export.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../../../Input/Inuit/Inuit.fbx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../../Output/Inuit/Inuit.gltf.glb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../../Output/Inuit/Inuit_albedo.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../../Output/Inuit/Inuit_normal.jpg" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,7 +26,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/op_EXPORT_export.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="331">
@@ -41,51 +39,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/__init__.py">
+        <entry file="file://$PROJECT_DIR$/../io_scene_gltf2/gltf2_export.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <folding>
-                <element signature="e#421#431#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="663">
+              <caret line="82" column="13" lean-forward="true" selection-start-line="82" selection-start-column="13" selection-end-line="82" selection-end-column="13" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/fn_msh.py">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/op_IMPORT_scan.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/../io_scene_gltf2/gltf2_generate.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/op_IMPORT_clean.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <folding>
-                <element signature="e#0#10#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/GUI.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="425">
-              <caret line="25" selection-start-line="25" selection-end-line="25" />
-              <folding>
-                <marker date="1562166933057" expanded="true" signature="429:431" ph="..." />
-              </folding>
+            <state relative-caret-position="238">
+              <caret line="1743" lean-forward="true" selection-start-line="1743" selection-end-line="1743" />
             </state>
           </provider>
         </entry>
@@ -112,7 +78,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="580" />
     <option name="y" value="20" />
     <option name="width" value="1400" />
@@ -218,15 +184,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#421#431#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/fn_msh.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -265,6 +222,29 @@
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#421#431#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../io_scene_gltf2/gltf2_export.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="663">
+          <caret line="82" column="13" lean-forward="true" selection-start-line="82" selection-start-column="13" selection-end-line="82" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../io_scene_gltf2/gltf2_generate.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="1743" lean-forward="true" selection-start-line="1743" selection-end-line="1743" />
         </state>
       </provider>
     </entry>
