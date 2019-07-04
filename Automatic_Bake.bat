@@ -1,16 +1,18 @@
-set blenderPath=Blender\blender.exe
+set blenderPath=..\Blender\blender.exe
 
-set bakeScriptPath=Blender\2.79\scripts\addons\BakeMyScan\scripts\bakemyscan.py
+set bakeScriptPath=..\Blender\2.79\scripts\addons\BakeMyScan\scripts\bakemyscan.py
 
-set name=Inuit
 
-mkdir Output\%name%
 
-set inPath=Input\%name%\%name%.fbx
+for %%I in (%1) do set name=%%~nxI
 
-set outPath=Output\%name%\%name%.obj
+mkdir ..\Output\%name%
 
-set colorPath=Input\%name%\%name%_diffuse.png
+set inPath=..\Input\%name%\%name%.fbx
+
+set outPath=..\Output\%name%\%name%.obj
+
+set colorPath=..\Input\%name%\%name%_diffuse.png
 
 set target=1500
 
