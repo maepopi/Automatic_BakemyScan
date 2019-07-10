@@ -56,4 +56,3 @@ set exportname=%name%_glb
 
 
 
-pause
