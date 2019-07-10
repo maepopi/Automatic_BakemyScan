@@ -1,0 +1,1686 @@
+OpenShadingLanguage 1.00
+# Compiled by oslc 1.9.9
+# options: -q -O2 -IC:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders -o C:/b/win64_cmake_vs2017/win64_cmake_vs2017/build/win64_cmake_vs2017/intern/cycles/kernel/shaders/node_image_texture.oso
+shader node_image_texture
+param	int	use_mapping	0		%read{2,2} %write{2147483647,-1}
+param	matrix	mapping	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0		%read{3,3} %write{2147483647,-1} %derivs
+param	point	Vector	0 0 0		%read{1,1} %write{0,0} %derivs %initexpr
+param	string	filename	""		%read{10,644} %write{2147483647,-1}
+param	string	projection	"flat"		%read{4,610} %write{2147483647,-1}
+param	string	interpolation	"smartcubic"		%read{10,644} %write{2147483647,-1}
+param	string	extension	"periodic"		%read{10,644} %write{2147483647,-1}
+param	float	projection_blend	0		%read{95,95} %write{2147483647,-1}
+param	int	compress_as_srgb	0		%read{29,663} %write{2147483647,-1}
+param	int	ignore_alpha	0		%read{11,645} %write{2147483647,-1}
+param	int	unassociate_alpha	0		%read{13,647} %write{2147483647,-1}
+param	int	is_float	1		%read{25,659} %write{2147483647,-1}
+oparam	color	Color	0 0 0		%read{339,501} %write{77,711}
+oparam	float	Alpha	1		%read{15,656} %write{10,646}
+global	point	P	%read{0,0} %write{2147483647,-1} %derivs
+global	normal	N	%read{80,80} %write{2147483647,-1}
+local	float	___685_u	%read{638,639} %write{636,637} %derivs
+local	float	___685_v	%read{639,639} %write{618,638} %derivs
+local	float	___685_len	%read{627,632} %write{626,626} %derivs
+local	float	___688_len	%read{512,531} %write{511,511} %derivs
+local	float	___688_v	%read{537,537} %write{534,536} %derivs
+local	float	___688_u	%read{536,537} %write{523,535} %derivs
+local	color	___693_rgb	%read{22,711} %write{10,710}
+local	point	p	%read{3,613} %write{1,3} %derivs
+local	vector	___698_Nob	%read{81,251} %write{80,93}
+local	vector	___698_weight	%read{168,502} %write{94,259}
+local	float	___698_blend	%read{96,224} %write{95,95}
+local	float	___698_limit	%read{102,255} %write{97,97}
+local	float	___698_tmp_alpha	%read{275,503} %write{270,434}
+local	point	___711_projected	%read{538,539} %write{537,537} %derivs
+local	point	___712_projected	%read{640,641} %write{639,639} %derivs
+const	string	$const1	"flat"		%read{4,4} %write{2147483647,-1}
+temp	int	$tmp1	%read{5,5} %write{4,4}
+const	int	$const2	0		%read{6,665} %write{2147483647,-1}
+temp	float	$tmp2	%read{10,10} %write{6,6} %derivs
+const	int	$const3	1		%read{7,680} %write{2147483647,-1}
+temp	float	$tmp3	%read{9,9} %write{7,7} %derivs
+const	string	$const4	"image_texture_lookup"		%read{8,642} %write{2147483647,-1}
+const	float	$const5	1		%read{9,706} %write{2147483647,-1}
+temp	float	$tmp4	%read{10,10} %write{9,9} %derivs
+const	string	$const6	"wrap"		%read{10,644} %write{2147483647,-1}
+const	string	$const7	"interp"		%read{10,644} %write{2147483647,-1}
+const	string	$const8	"alpha"		%read{10,644} %write{2147483647,-1}
+const	string	$const9	"color_unpremultiply"		%read{14,648} %write{2147483647,-1}
+temp	int	$tmp5	%read{16,16} %write{15,15}
+temp	int	$tmp6	%read{17,21} %write{16,20}
+const	float	$const10	0		%read{18,701} %write{2147483647,-1}
+temp	int	$tmp7	%read{19,19} %write{18,18}
+temp	int	$tmp8	%read{20,20} %write{19,19}
+temp	int	$tmp9	%read{26,26} %write{25,25}
+temp	color	$tmp10	%read{28,28} %write{27,27}
+const	string	$const11	"color_srgb_to_scene_linear"		%read{30,696} %write{2147483647,-1}
+temp	float	$tmp11	%read{76,76} %write{37,44}
+temp	float	$tmp12	%read{33,41} %write{31,31}
+const	float	$const12	0.040449999		%read{33,697} %write{2147483647,-1}
+temp	int	$tmp13	%read{34,34} %write{33,33}
+temp	int	$tmp14	%read{36,36} %write{35,35}
+const	float	$const13	12.92		%read{38,702} %write{2147483647,-1}
+temp	float	$tmp15	%read{39,39} %write{38,38}
+const	float	$const14	0.055		%read{41,705} %write{2147483647,-1}
+temp	float	$tmp16	%read{43,43} %write{41,41}
+const	float	$const15	1.0549999		%read{42,706} %write{2147483647,-1}
+temp	float	$tmp17	%read{43,43} %write{42,42}
+temp	float	$tmp18	%read{44,44} %write{43,43}
+const	float	$const16	2.4000001		%read{44,708} %write{2147483647,-1}
+temp	float	$tmp19	%read{76,76} %write{52,59}
+temp	float	$tmp20	%read{48,56} %write{46,46}
+temp	int	$tmp21	%read{49,49} %write{48,48}
+temp	int	$tmp22	%read{51,51} %write{50,50}
+temp	float	$tmp23	%read{54,54} %write{53,53}
+temp	float	$tmp24	%read{58,58} %write{56,56}
+temp	float	$tmp25	%read{58,58} %write{57,57}
+temp	float	$tmp26	%read{59,59} %write{58,58}
+temp	float	$tmp27	%read{76,76} %write{67,74}
+const	int	$const17	2		%read{61,695} %write{2147483647,-1}
+temp	float	$tmp28	%read{63,71} %write{61,61}
+temp	int	$tmp29	%read{64,64} %write{63,63}
+temp	int	$tmp30	%read{66,66} %write{65,65}
+temp	float	$tmp31	%read{69,69} %write{68,68}
+temp	float	$tmp32	%read{73,73} %write{71,71}
+temp	float	$tmp33	%read{73,73} %write{72,72}
+temp	float	$tmp34	%read{74,74} %write{73,73}
+const	string	$const18	"box"		%read{78,78} %write{2147483647,-1}
+temp	int	$tmp35	%read{79,79} %write{78,78}
+const	string	$const19	"world"		%read{80,80} %write{2147483647,-1}
+const	string	$const20	"object"		%read{80,80} %write{2147483647,-1}
+temp	float	$tmp36	%read{87,87} %write{82,82}
+temp	float	$tmp37	%read{82,82} %write{81,81}
+temp	float	$tmp38	%read{87,87} %write{84,84}
+temp	float	$tmp39	%read{84,84} %write{83,83}
+temp	float	$tmp40	%read{87,87} %write{86,86}
+temp	float	$tmp41	%read{86,86} %write{85,85}
+temp	float	$tmp42	%read{90,90} %write{88,88}
+temp	float	$tmp43	%read{90,90} %write{89,89}
+temp	float	$tmp44	%read{92,92} %write{90,90}
+temp	float	$tmp45	%read{92,92} %write{91,91}
+temp	float	$tmp46	%read{93,93} %write{92,92}
+const	vector	$const21	0 0 0		%read{94,94} %write{2147483647,-1}
+const	float	$const22	0.5		%read{97,636} %write{2147483647,-1}
+temp	float	$tmp47	%read{97,97} %write{96,96}
+temp	float	$tmp48	%read{103,103} %write{98,98}
+temp	float	$tmp49	%read{101,101} %write{99,99}
+temp	float	$tmp50	%read{101,101} %write{100,100}
+temp	float	$tmp51	%read{102,102} %write{101,101}
+temp	float	$tmp52	%read{103,103} %write{102,102}
+temp	int	$tmp53	%read{104,104} %write{103,103}
+temp	int	$tmp54	%read{105,114} %write{104,113}
+temp	float	$tmp55	%read{111,111} %write{106,106}
+temp	float	$tmp56	%read{109,109} %write{107,107}
+temp	float	$tmp57	%read{109,109} %write{108,108}
+temp	float	$tmp58	%read{110,110} %write{109,109}
+temp	float	$tmp59	%read{111,111} %write{110,110}
+temp	int	$tmp60	%read{112,112} %write{111,111}
+temp	int	$tmp61	%read{113,113} %write{112,112}
+temp	float	$tmp62	%read{121,121} %write{116,116}
+temp	float	$tmp63	%read{119,119} %write{117,117}
+temp	float	$tmp64	%read{119,119} %write{118,118}
+temp	float	$tmp65	%read{120,120} %write{119,119}
+temp	float	$tmp66	%read{121,121} %write{120,120}
+temp	int	$tmp67	%read{122,122} %write{121,121}
+temp	int	$tmp68	%read{123,132} %write{122,131}
+temp	float	$tmp69	%read{129,129} %write{124,124}
+temp	float	$tmp70	%read{127,127} %write{125,125}
+temp	float	$tmp71	%read{127,127} %write{126,126}
+temp	float	$tmp72	%read{128,128} %write{127,127}
+temp	float	$tmp73	%read{129,129} %write{128,128}
+temp	int	$tmp74	%read{130,130} %write{129,129}
+temp	int	$tmp75	%read{131,131} %write{130,130}
+temp	float	$tmp76	%read{139,139} %write{134,134}
+temp	float	$tmp77	%read{137,137} %write{135,135}
+temp	float	$tmp78	%read{137,137} %write{136,136}
+temp	float	$tmp79	%read{138,138} %write{137,137}
+temp	float	$tmp80	%read{139,139} %write{138,138}
+temp	int	$tmp81	%read{140,140} %write{139,139}
+temp	int	$tmp82	%read{141,150} %write{140,149}
+temp	float	$tmp83	%read{147,147} %write{142,142}
+temp	float	$tmp84	%read{145,145} %write{143,143}
+temp	float	$tmp85	%read{145,145} %write{144,144}
+temp	float	$tmp86	%read{146,146} %write{145,145}
+temp	float	$tmp87	%read{147,147} %write{146,146}
+temp	int	$tmp88	%read{148,148} %write{147,147}
+temp	int	$tmp89	%read{149,149} %write{148,148}
+temp	int	$tmp90	%read{153,153} %write{152,152}
+temp	float	$tmp91	%read{160,160} %write{154,154}
+temp	float	$tmp92	%read{159,159} %write{155,155}
+temp	float	$tmp93	%read{158,158} %write{156,156}
+temp	float	$tmp94	%read{158,158} %write{157,157}
+temp	float	$tmp95	%read{159,159} %write{158,158}
+temp	float	$tmp96	%read{160,160} %write{159,159}
+temp	int	$tmp97	%read{161,161} %write{160,160}
+temp	float	$tmp98	%read{166,166} %write{162,162}
+temp	float	$tmp99	%read{165,165} %write{163,163}
+temp	float	$tmp100	%read{165,165} %write{164,164}
+temp	float	$tmp101	%read{166,166} %write{165,165}
+temp	float	$tmp102	%read{167,167} %write{166,166}
+temp	float	$tmp103	%read{176,176} %write{175,175}
+temp	float	$tmp104	%read{171,171} %write{168,168}
+temp	float	$tmp105	%read{170,170} %write{169,169}
+temp	float	$tmp106	%read{171,171} %write{170,170}
+temp	float	$tmp107	%read{172,172} %write{171,171}
+temp	float	$tmp108	%read{174,174} %write{172,172}
+const	string	$const23	"clamp"		%read{173,225} %write{2147483647,-1}
+temp	float	$tmp109	%read{175,175} %write{174,174}
+temp	float	$tmp110	%read{178,178} %write{177,177}
+temp	float	$tmp111	%read{179,179} %write{178,178}
+temp	float	$tmp112	%read{186,186} %write{180,180}
+temp	float	$tmp113	%read{185,185} %write{181,181}
+temp	float	$tmp114	%read{184,184} %write{182,182}
+temp	float	$tmp115	%read{184,184} %write{183,183}
+temp	float	$tmp116	%read{185,185} %write{184,184}
+temp	float	$tmp117	%read{186,186} %write{185,185}
+temp	int	$tmp118	%read{187,187} %write{186,186}
+temp	float	$tmp119	%read{192,192} %write{188,188}
+temp	float	$tmp120	%read{191,191} %write{189,189}
+temp	float	$tmp121	%read{191,191} %write{190,190}
+temp	float	$tmp122	%read{192,192} %write{191,191}
+temp	float	$tmp123	%read{193,193} %write{192,192}
+temp	float	$tmp124	%read{202,202} %write{201,201}
+temp	float	$tmp125	%read{197,197} %write{194,194}
+temp	float	$tmp126	%read{196,196} %write{195,195}
+temp	float	$tmp127	%read{197,197} %write{196,196}
+temp	float	$tmp128	%read{198,198} %write{197,197}
+temp	float	$tmp129	%read{200,200} %write{198,198}
+temp	float	$tmp130	%read{201,201} %write{200,200}
+temp	float	$tmp131	%read{204,204} %write{203,203}
+temp	float	$tmp132	%read{205,205} %write{204,204}
+temp	float	$tmp133	%read{212,212} %write{206,206}
+temp	float	$tmp134	%read{211,211} %write{207,207}
+temp	float	$tmp135	%read{210,210} %write{208,208}
+temp	float	$tmp136	%read{210,210} %write{209,209}
+temp	float	$tmp137	%read{211,211} %write{210,210}
+temp	float	$tmp138	%read{212,212} %write{211,211}
+temp	int	$tmp139	%read{213,213} %write{212,212}
+temp	float	$tmp140	%read{218,218} %write{214,214}
+temp	float	$tmp141	%read{217,217} %write{215,215}
+temp	float	$tmp142	%read{217,217} %write{216,216}
+temp	float	$tmp143	%read{218,218} %write{217,217}
+temp	float	$tmp144	%read{219,219} %write{218,218}
+temp	float	$tmp145	%read{228,228} %write{227,227}
+temp	float	$tmp146	%read{223,223} %write{220,220}
+temp	float	$tmp147	%read{222,222} %write{221,221}
+temp	float	$tmp148	%read{223,223} %write{222,222}
+temp	float	$tmp149	%read{224,224} %write{223,223}
+temp	float	$tmp150	%read{226,226} %write{224,224}
+temp	float	$tmp151	%read{227,227} %write{226,226}
+temp	float	$tmp152	%read{230,230} %write{229,229}
+temp	float	$tmp153	%read{231,231} %write{230,230}
+const	float	$const24	2		%read{232,614} %write{2147483647,-1}
+temp	float	$tmp154	%read{234,234} %write{232,232}
+temp	float	$tmp155	%read{234,234} %write{233,233}
+temp	float	$tmp156	%read{236,236} %write{234,234}
+temp	float	$tmp157	%read{236,236} %write{235,235}
+temp	float	$tmp158	%read{239,239} %write{236,236}
+temp	float	$tmp159	%read{238,238} %write{237,237}
+temp	float	$tmp160	%read{239,239} %write{238,238}
+temp	float	$tmp161	%read{240,240} %write{239,239}
+temp	float	$tmp162	%read{243,243} %write{241,241}
+temp	float	$tmp163	%read{243,243} %write{242,242}
+temp	float	$tmp164	%read{245,245} %write{243,243}
+temp	float	$tmp165	%read{245,245} %write{244,244}
+temp	float	$tmp166	%read{248,248} %write{245,245}
+temp	float	$tmp167	%read{247,247} %write{246,246}
+temp	float	$tmp168	%read{248,248} %write{247,247}
+temp	float	$tmp169	%read{249,249} %write{248,248}
+temp	float	$tmp170	%read{252,252} %write{250,250}
+temp	float	$tmp171	%read{252,252} %write{251,251}
+temp	float	$tmp172	%read{254,254} %write{252,252}
+temp	float	$tmp173	%read{254,254} %write{253,253}
+temp	float	$tmp174	%read{257,257} %write{254,254}
+temp	float	$tmp175	%read{256,256} %write{255,255}
+temp	float	$tmp176	%read{257,257} %write{256,256}
+temp	float	$tmp177	%read{258,258} %write{257,257}
+const	color	$const25	0 0 0		%read{260,260} %write{2147483647,-1}
+temp	float	$tmp178	%read{263,263} %write{262,262}
+temp	int	$tmp179	%read{264,264} %write{263,263}
+temp	float	$tmp180	%read{338,338} %write{265,265}
+temp	color	$tmp181	%read{338,338} %write{337,337}
+temp	float	$tmp182	%read{270,270} %write{266,266} %derivs
+temp	float	$tmp183	%read{269,269} %write{267,267} %derivs
+temp	float	$tmp184	%read{270,270} %write{269,269} %derivs
+temp	int	$tmp185	%read{276,276} %write{275,275}
+temp	int	$tmp186	%read{277,281} %write{276,280}
+temp	int	$tmp187	%read{279,279} %write{278,278}
+temp	int	$tmp188	%read{280,280} %write{279,279}
+temp	int	$tmp189	%read{286,286} %write{285,285}
+temp	color	$tmp190	%read{288,288} %write{287,287}
+temp	float	$tmp191	%read{336,336} %write{297,304}
+temp	float	$tmp192	%read{293,301} %write{291,291}
+temp	int	$tmp193	%read{294,294} %write{293,293}
+temp	int	$tmp194	%read{296,296} %write{295,295}
+temp	float	$tmp195	%read{299,299} %write{298,298}
+temp	float	$tmp196	%read{303,303} %write{301,301}
+temp	float	$tmp197	%read{303,303} %write{302,302}
+temp	float	$tmp198	%read{304,304} %write{303,303}
+temp	float	$tmp199	%read{336,336} %write{312,319}
+temp	float	$tmp200	%read{308,316} %write{306,306}
+temp	int	$tmp201	%read{309,309} %write{308,308}
+temp	int	$tmp202	%read{311,311} %write{310,310}
+temp	float	$tmp203	%read{314,314} %write{313,313}
+temp	float	$tmp204	%read{318,318} %write{316,316}
+temp	float	$tmp205	%read{318,318} %write{317,317}
+temp	float	$tmp206	%read{319,319} %write{318,318}
+temp	float	$tmp207	%read{336,336} %write{327,334}
+temp	float	$tmp208	%read{323,331} %write{321,321}
+temp	int	$tmp209	%read{324,324} %write{323,323}
+temp	int	$tmp210	%read{326,326} %write{325,325}
+temp	float	$tmp211	%read{329,329} %write{328,328}
+temp	float	$tmp212	%read{333,333} %write{331,331}
+temp	float	$tmp213	%read{333,333} %write{332,332}
+temp	float	$tmp214	%read{334,334} %write{333,333}
+temp	color	$tmp215	%read{339,339} %write{338,338}
+temp	float	$tmp216	%read{341,341} %write{340,340}
+temp	float	$tmp217	%read{342,342} %write{341,341}
+temp	float	$tmp218	%read{344,344} %write{343,343}
+temp	int	$tmp219	%read{345,345} %write{344,344}
+temp	float	$tmp220	%read{419,419} %write{346,346}
+temp	color	$tmp221	%read{419,419} %write{418,418}
+temp	float	$tmp222	%read{351,351} %write{347,347} %derivs
+temp	float	$tmp223	%read{350,350} %write{348,348} %derivs
+temp	float	$tmp224	%read{351,351} %write{350,350} %derivs
+temp	int	$tmp225	%read{357,357} %write{356,356}
+temp	int	$tmp226	%read{358,362} %write{357,361}
+temp	int	$tmp227	%read{360,360} %write{359,359}
+temp	int	$tmp228	%read{361,361} %write{360,360}
+temp	int	$tmp229	%read{367,367} %write{366,366}
+temp	color	$tmp230	%read{369,369} %write{368,368}
+temp	float	$tmp231	%read{417,417} %write{378,385}
+temp	float	$tmp232	%read{374,382} %write{372,372}
+temp	int	$tmp233	%read{375,375} %write{374,374}
+temp	int	$tmp234	%read{377,377} %write{376,376}
+temp	float	$tmp235	%read{380,380} %write{379,379}
+temp	float	$tmp236	%read{384,384} %write{382,382}
+temp	float	$tmp237	%read{384,384} %write{383,383}
+temp	float	$tmp238	%read{385,385} %write{384,384}
+temp	float	$tmp239	%read{417,417} %write{393,400}
+temp	float	$tmp240	%read{389,397} %write{387,387}
+temp	int	$tmp241	%read{390,390} %write{389,389}
+temp	int	$tmp242	%read{392,392} %write{391,391}
+temp	float	$tmp243	%read{395,395} %write{394,394}
+temp	float	$tmp244	%read{399,399} %write{397,397}
+temp	float	$tmp245	%read{399,399} %write{398,398}
+temp	float	$tmp246	%read{400,400} %write{399,399}
+temp	float	$tmp247	%read{417,417} %write{408,415}
+temp	float	$tmp248	%read{404,412} %write{402,402}
+temp	int	$tmp249	%read{405,405} %write{404,404}
+temp	int	$tmp250	%read{407,407} %write{406,406}
+temp	float	$tmp251	%read{410,410} %write{409,409}
+temp	float	$tmp252	%read{414,414} %write{412,412}
+temp	float	$tmp253	%read{414,414} %write{413,413}
+temp	float	$tmp254	%read{415,415} %write{414,414}
+temp	color	$tmp255	%read{420,420} %write{419,419}
+temp	float	$tmp256	%read{422,422} %write{421,421}
+temp	float	$tmp257	%read{423,423} %write{422,422}
+temp	float	$tmp258	%read{425,425} %write{424,424}
+temp	int	$tmp259	%read{426,426} %write{425,425}
+temp	float	$tmp260	%read{500,500} %write{427,427}
+temp	color	$tmp261	%read{500,500} %write{499,499}
+temp	float	$tmp262	%read{432,432} %write{428,428} %derivs
+temp	float	$tmp263	%read{431,431} %write{429,429} %derivs
+temp	float	$tmp264	%read{432,432} %write{431,431} %derivs
+temp	int	$tmp265	%read{438,438} %write{437,437}
+temp	int	$tmp266	%read{439,443} %write{438,442}
+temp	int	$tmp267	%read{441,441} %write{440,440}
+temp	int	$tmp268	%read{442,442} %write{441,441}
+temp	int	$tmp269	%read{448,448} %write{447,447}
+temp	color	$tmp270	%read{450,450} %write{449,449}
+temp	float	$tmp271	%read{498,498} %write{459,466}
+temp	float	$tmp272	%read{455,463} %write{453,453}
+temp	int	$tmp273	%read{456,456} %write{455,455}
+temp	int	$tmp274	%read{458,458} %write{457,457}
+temp	float	$tmp275	%read{461,461} %write{460,460}
+temp	float	$tmp276	%read{465,465} %write{463,463}
+temp	float	$tmp277	%read{465,465} %write{464,464}
+temp	float	$tmp278	%read{466,466} %write{465,465}
+temp	float	$tmp279	%read{498,498} %write{474,481}
+temp	float	$tmp280	%read{470,478} %write{468,468}
+temp	int	$tmp281	%read{471,471} %write{470,470}
+temp	int	$tmp282	%read{473,473} %write{472,472}
+temp	float	$tmp283	%read{476,476} %write{475,475}
+temp	float	$tmp284	%read{480,480} %write{478,478}
+temp	float	$tmp285	%read{480,480} %write{479,479}
+temp	float	$tmp286	%read{481,481} %write{480,480}
+temp	float	$tmp287	%read{498,498} %write{489,496}
+temp	float	$tmp288	%read{485,493} %write{483,483}
+temp	int	$tmp289	%read{486,486} %write{485,485}
+temp	int	$tmp290	%read{488,488} %write{487,487}
+temp	float	$tmp291	%read{491,491} %write{490,490}
+temp	float	$tmp292	%read{495,495} %write{493,493}
+temp	float	$tmp293	%read{495,495} %write{494,494}
+temp	float	$tmp294	%read{496,496} %write{495,495}
+temp	color	$tmp295	%read{501,501} %write{500,500}
+temp	float	$tmp296	%read{503,503} %write{502,502}
+temp	float	$tmp297	%read{504,504} %write{503,503}
+const	string	$const26	"sphere"		%read{505,505} %write{2147483647,-1}
+temp	int	$tmp298	%read{506,506} %write{505,505}
+temp	point	$tmp299	%read{511,530} %write{509,509} %derivs
+const	string	$const27	"texco_remap_square"		%read{507,612} %write{2147483647,-1}
+const	point	$const28	0.5 0.5 0.5		%read{508,613} %write{2147483647,-1}
+temp	vector	$tmp301	%read{509,509} %write{508,508} %derivs
+const	string	$const29	"map_to_sphere"		%read{510,510} %write{2147483647,-1}
+temp	int	$tmp302	%read{513,513} %write{512,512}
+temp	float	$tmp303	%read{515,515} %write{514,514}
+temp	int	$tmp304	%read{516,516} %write{515,515}
+temp	int	$tmp305	%read{517,522} %write{516,521}
+temp	float	$tmp306	%read{519,519} %write{518,518}
+temp	int	$tmp307	%read{520,520} %write{519,519}
+temp	int	$tmp308	%read{521,521} %write{520,520}
+temp	float	$tmp309	%read{527,527} %write{526,526} %derivs
+temp	float	$tmp310	%read{526,526} %write{524,524} %derivs
+temp	float	$tmp311	%read{526,526} %write{525,525} %derivs
+const	float	$const30	3.1415927		%read{527,634} %write{2147483647,-1}
+temp	float	$tmp312	%read{528,528} %write{527,527} %derivs
+temp	float	$tmp313	%read{529,529} %write{528,528} %derivs
+temp	float	$tmp314	%read{533,533} %write{532,532} %derivs
+temp	float	$tmp315	%read{531,531} %write{530,530} %derivs
+temp	float	$tmp316	%read{532,532} %write{531,531} %derivs
+temp	float	$tmp317	%read{534,534} %write{533,533} %derivs
+temp	float	$tmp318	%read{542,542} %write{538,538} %derivs
+temp	float	$tmp319	%read{541,541} %write{539,539} %derivs
+temp	float	$tmp320	%read{542,542} %write{541,541} %derivs
+temp	int	$tmp321	%read{548,548} %write{547,547}
+temp	int	$tmp322	%read{549,553} %write{548,552}
+temp	int	$tmp323	%read{551,551} %write{550,550}
+temp	int	$tmp324	%read{552,552} %write{551,551}
+temp	int	$tmp325	%read{558,558} %write{557,557}
+temp	color	$tmp326	%read{560,560} %write{559,559}
+temp	float	$tmp327	%read{608,608} %write{569,576}
+temp	float	$tmp328	%read{565,573} %write{563,563}
+temp	int	$tmp329	%read{566,566} %write{565,565}
+temp	int	$tmp330	%read{568,568} %write{567,567}
+temp	float	$tmp331	%read{571,571} %write{570,570}
+temp	float	$tmp332	%read{575,575} %write{573,573}
+temp	float	$tmp333	%read{575,575} %write{574,574}
+temp	float	$tmp334	%read{576,576} %write{575,575}
+temp	float	$tmp335	%read{608,608} %write{584,591}
+temp	float	$tmp336	%read{580,588} %write{578,578}
+temp	int	$tmp337	%read{581,581} %write{580,580}
+temp	int	$tmp338	%read{583,583} %write{582,582}
+temp	float	$tmp339	%read{586,586} %write{585,585}
+temp	float	$tmp340	%read{590,590} %write{588,588}
+temp	float	$tmp341	%read{590,590} %write{589,589}
+temp	float	$tmp342	%read{591,591} %write{590,590}
+temp	float	$tmp343	%read{608,608} %write{599,606}
+temp	float	$tmp344	%read{595,603} %write{593,593}
+temp	int	$tmp345	%read{596,596} %write{595,595}
+temp	int	$tmp346	%read{598,598} %write{597,597}
+temp	float	$tmp347	%read{601,601} %write{600,600}
+temp	float	$tmp348	%read{605,605} %write{603,603}
+temp	float	$tmp349	%read{605,605} %write{604,604}
+temp	float	$tmp350	%read{606,606} %write{605,605}
+const	string	$const31	"tube"		%read{610,610} %write{2147483647,-1}
+temp	int	$tmp351	%read{611,611} %write{610,610}
+temp	point	$tmp352	%read{616,631} %write{614,614} %derivs
+temp	vector	$tmp354	%read{614,614} %write{613,613} %derivs
+const	string	$const32	"map_to_tube"		%read{615,615} %write{2147483647,-1}
+temp	float	$tmp355	%read{617,617} %write{616,616} %derivs
+temp	float	$tmp356	%read{618,618} %write{617,617} %derivs
+temp	float	$tmp357	%read{621,621} %write{619,619} %derivs
+temp	float	$tmp358	%read{621,621} %write{620,620} %derivs
+temp	float	$tmp359	%read{625,625} %write{621,621} %derivs
+temp	float	$tmp360	%read{624,624} %write{622,622} %derivs
+temp	float	$tmp361	%read{624,624} %write{623,623} %derivs
+temp	float	$tmp362	%read{625,625} %write{624,624} %derivs
+temp	float	$tmp363	%read{626,626} %write{625,625} %derivs
+temp	int	$tmp364	%read{628,628} %write{627,627}
+temp	float	$tmp365	%read{634,634} %write{633,633} %derivs
+temp	float	$tmp366	%read{630,630} %write{629,629} %derivs
+temp	float	$tmp367	%read{633,633} %write{630,630} %derivs
+temp	float	$tmp368	%read{632,632} %write{631,631} %derivs
+temp	float	$tmp369	%read{633,633} %write{632,632} %derivs
+temp	float	$tmp370	%read{635,635} %write{634,634} %derivs
+temp	float	$tmp371	%read{636,636} %write{635,635} %derivs
+temp	float	$tmp372	%read{644,644} %write{640,640} %derivs
+temp	float	$tmp373	%read{643,643} %write{641,641} %derivs
+temp	float	$tmp374	%read{644,644} %write{643,643} %derivs
+temp	int	$tmp375	%read{650,650} %write{649,649}
+temp	int	$tmp376	%read{651,655} %write{650,654}
+temp	int	$tmp377	%read{653,653} %write{652,652}
+temp	int	$tmp378	%read{654,654} %write{653,653}
+temp	int	$tmp379	%read{660,660} %write{659,659}
+temp	color	$tmp380	%read{662,662} %write{661,661}
+temp	float	$tmp381	%read{710,710} %write{671,678}
+temp	float	$tmp382	%read{667,675} %write{665,665}
+temp	int	$tmp383	%read{668,668} %write{667,667}
+temp	int	$tmp384	%read{670,670} %write{669,669}
+temp	float	$tmp385	%read{673,673} %write{672,672}
+temp	float	$tmp386	%read{677,677} %write{675,675}
+temp	float	$tmp387	%read{677,677} %write{676,676}
+temp	float	$tmp388	%read{678,678} %write{677,677}
+temp	float	$tmp389	%read{710,710} %write{686,693}
+temp	float	$tmp390	%read{682,690} %write{680,680}
+temp	int	$tmp391	%read{683,683} %write{682,682}
+temp	int	$tmp392	%read{685,685} %write{684,684}
+temp	float	$tmp393	%read{688,688} %write{687,687}
+temp	float	$tmp394	%read{692,692} %write{690,690}
+temp	float	$tmp395	%read{692,692} %write{691,691}
+temp	float	$tmp396	%read{693,693} %write{692,692}
+temp	float	$tmp397	%read{710,710} %write{701,708}
+temp	float	$tmp398	%read{697,705} %write{695,695}
+temp	int	$tmp399	%read{698,698} %write{697,697}
+temp	int	$tmp400	%read{700,700} %write{699,699}
+temp	float	$tmp401	%read{703,703} %write{702,702}
+temp	float	$tmp402	%read{707,707} %write{705,705}
+temp	float	$tmp403	%read{707,707} %write{706,706}
+temp	float	$tmp404	%read{708,708} %write{707,707}
+code Vector
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:91
+#                           point Vector = P,
+	assign		Vector P 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{91} %argrw{"wr"}
+code ___main___
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:104
+#   point p = Vector;
+	assign		p Vector 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{104} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:106
+#   if (use_mapping)
+	if		use_mapping 4 4 	%line{106} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:107
+#     p = transform(mapping, p);
+	transform	p mapping p 	%line{107} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:109
+#   if (projection == "flat") {
+	eq		$tmp1 projection $const1 	%line{109} %argrw{"wrr"}
+	if		$tmp1 78 712 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:111
+#                                  p[0],
+	compref		$tmp2 p $const2 	%line{111} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:112
+#                                  p[1],
+	compref		$tmp3 p $const3 	%line{112} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:119
+#                                  extension);
+	functioncall	$const4 78 	%line{119} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:70
+#       filename, u, 1.0 - v, "wrap", extension, "interp", interpolation, "alpha", Alpha);
+	sub		$tmp4 $const5 $tmp3 	%line{70} %argrw{"wrr"}
+	texture		___693_rgb filename $tmp2 $tmp4 $const6 extension $const7 interpolation $const8 Alpha 	%argrw{"wrrrrrrrrw"} %argderivs{2,3}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:72
+#   if (ignore_alpha) {
+	if		ignore_alpha 13 29 	%line{72} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:73
+#     Alpha = 1.0;
+	assign		Alpha $const5 	%line{73} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:75
+#   else if (unassociate_alpha) {
+	if		unassociate_alpha 29 29 	%line{75} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:76
+#     rgb = color_unpremultiply(rgb, Alpha);
+	functioncall	$const9 25 	%line{76} %argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:51
+#   if (alpha != 1.0 && alpha != 0.0)
+	neq		$tmp5 Alpha $const5 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h"} %line{51} %argrw{"wrr"}
+	neq		$tmp6 $tmp5 $const2 	%argrw{"wrr"}
+	if		$tmp6 21 21 	%argrw{"r"}
+	neq		$tmp7 Alpha $const10 	%argrw{"wrr"}
+	neq		$tmp8 $tmp7 $const2 	%argrw{"wrr"}
+	assign		$tmp6 $tmp8 	%argrw{"wr"}
+	if		$tmp6 24 24 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:52
+#     return c / alpha;
+	div		___693_rgb ___693_rgb Alpha 	%line{52} %argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:54
+#   return c;
+	assign		___693_rgb ___693_rgb 	%line{54} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:78
+#     if (!is_float)
+	eq		$tmp9 is_float $const2 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{78} %argrw{"wrr"}
+	if		$tmp9 29 29 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:79
+#       rgb = min(rgb, 1.0);
+	assign		$tmp10 $const5 	%line{79} %argrw{"wr"}
+	min		___693_rgb ___693_rgb $tmp10 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:82
+#   if (compress_as_srgb) {
+	if		compress_as_srgb 77 77 	%line{82} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:83
+#     rgb = color_srgb_to_scene_linear(rgb);
+	functioncall	$const11 77 	%line{83} %argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:37
+#   return color(color_srgb_to_scene_linear(c[0]),
+	compref		$tmp12 ___693_rgb $const2 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h"} %line{37} %argrw{"wrr"}
+	functioncall	$const11 46 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp13 $tmp12 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp13 41 46 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp14 $tmp12 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp14 38 40 	%argrw{"r"}
+	assign		$tmp11 $const10 	%argrw{"wr"}
+	div		$tmp15 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp11 $tmp12 $tmp15 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp16 $tmp12 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp17 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp18 $tmp16 $tmp17 	%argrw{"wrr"}
+	pow		$tmp11 $tmp18 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:38
+#                color_srgb_to_scene_linear(c[1]),
+	compref		$tmp20 ___693_rgb $const3 	%line{38} %argrw{"wrr"}
+	functioncall	$const11 61 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp21 $tmp20 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp21 56 61 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp22 $tmp20 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp22 53 55 	%argrw{"r"}
+	assign		$tmp19 $const10 	%argrw{"wr"}
+	div		$tmp23 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp19 $tmp20 $tmp23 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp24 $tmp20 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp25 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp26 $tmp24 $tmp25 	%argrw{"wrr"}
+	pow		$tmp19 $tmp26 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:39
+#                color_srgb_to_scene_linear(c[2]));
+	compref		$tmp28 ___693_rgb $const17 	%line{39} %argrw{"wrr"}
+	functioncall	$const11 76 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp29 $tmp28 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp29 71 76 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp30 $tmp28 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp30 68 70 	%argrw{"r"}
+	assign		$tmp27 $const10 	%argrw{"wr"}
+	div		$tmp31 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp27 $tmp28 $tmp31 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp32 $tmp28 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp33 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp34 $tmp32 $tmp33 	%argrw{"wrr"}
+	pow		$tmp27 $tmp34 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:39
+#                color_srgb_to_scene_linear(c[2]));
+	color		___693_rgb $tmp11 $tmp19 $tmp27 	%line{39} %argrw{"wrrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:86
+#   return rgb;
+	assign		Color ___693_rgb 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{86} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:121
+#   else if (projection == "box") {
+	eq		$tmp35 projection $const18 	%line{121} %argrw{"wrr"}
+	if		$tmp35 505 712 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:123
+#     vector Nob = transform("world", "object", N);
+	transformn	___698_Nob $const19 $const20 N 	%line{123} %argrw{"wrrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:126
+#     Nob = vector(fabs(Nob[0]), fabs(Nob[1]), fabs(Nob[2]));
+	compref		$tmp37 ___698_Nob $const2 	%line{126} %argrw{"wrr"}
+	fabs		$tmp36 $tmp37 	%argrw{"wr"}
+	compref		$tmp39 ___698_Nob $const3 	%argrw{"wrr"}
+	fabs		$tmp38 $tmp39 	%argrw{"wr"}
+	compref		$tmp41 ___698_Nob $const17 	%argrw{"wrr"}
+	fabs		$tmp40 $tmp41 	%argrw{"wr"}
+	vector		___698_Nob $tmp36 $tmp38 $tmp40 	%argrw{"wrrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:127
+#     Nob /= (Nob[0] + Nob[1] + Nob[2]);
+	compref		$tmp42 ___698_Nob $const2 	%line{127} %argrw{"wrr"}
+	compref		$tmp43 ___698_Nob $const3 	%argrw{"wrr"}
+	add		$tmp44 $tmp42 $tmp43 	%argrw{"wrr"}
+	compref		$tmp45 ___698_Nob $const17 	%argrw{"wrr"}
+	add		$tmp46 $tmp44 $tmp45 	%argrw{"wrr"}
+	div		___698_Nob ___698_Nob $tmp46 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:139
+#     vector weight = vector(0.0, 0.0, 0.0);
+	assign		___698_weight $const21 	%line{139} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:140
+#     float blend = projection_blend;
+	assign		___698_blend projection_blend 	%line{140} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:141
+#     float limit = 0.5 * (1.0 + blend);
+	add		$tmp47 $const5 ___698_blend 	%line{141} %argrw{"wrr"}
+	mul		___698_limit $const22 $tmp47 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:144
+#     if (Nob[0] > limit * (Nob[0] + Nob[1]) && Nob[0] > limit * (Nob[0] + Nob[2])) {
+	compref		$tmp48 ___698_Nob $const2 	%line{144} %argrw{"wrr"}
+	compref		$tmp49 ___698_Nob $const2 	%argrw{"wrr"}
+	compref		$tmp50 ___698_Nob $const3 	%argrw{"wrr"}
+	add		$tmp51 $tmp49 $tmp50 	%argrw{"wrr"}
+	mul		$tmp52 ___698_limit $tmp51 	%argrw{"wrr"}
+	gt		$tmp53 $tmp48 $tmp52 	%argrw{"wrr"}
+	neq		$tmp54 $tmp53 $const2 	%argrw{"wrr"}
+	if		$tmp54 114 114 	%argrw{"r"}
+	compref		$tmp55 ___698_Nob $const2 	%argrw{"wrr"}
+	compref		$tmp56 ___698_Nob $const2 	%argrw{"wrr"}
+	compref		$tmp57 ___698_Nob $const17 	%argrw{"wrr"}
+	add		$tmp58 $tmp56 $tmp57 	%argrw{"wrr"}
+	mul		$tmp59 ___698_limit $tmp58 	%argrw{"wrr"}
+	gt		$tmp60 $tmp55 $tmp59 	%argrw{"wrr"}
+	neq		$tmp61 $tmp60 $const2 	%argrw{"wrr"}
+	assign		$tmp54 $tmp61 	%argrw{"wr"}
+	if		$tmp54 116 260 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:145
+#       weight[0] = 1.0;
+	compassign	___698_weight $const2 $const5 	%line{145} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:147
+#     else if (Nob[1] > limit * (Nob[0] + Nob[1]) && Nob[1] > limit * (Nob[1] + Nob[2])) {
+	compref		$tmp62 ___698_Nob $const3 	%line{147} %argrw{"wrr"}
+	compref		$tmp63 ___698_Nob $const2 	%argrw{"wrr"}
+	compref		$tmp64 ___698_Nob $const3 	%argrw{"wrr"}
+	add		$tmp65 $tmp63 $tmp64 	%argrw{"wrr"}
+	mul		$tmp66 ___698_limit $tmp65 	%argrw{"wrr"}
+	gt		$tmp67 $tmp62 $tmp66 	%argrw{"wrr"}
+	neq		$tmp68 $tmp67 $const2 	%argrw{"wrr"}
+	if		$tmp68 132 132 	%argrw{"r"}
+	compref		$tmp69 ___698_Nob $const3 	%argrw{"wrr"}
+	compref		$tmp70 ___698_Nob $const3 	%argrw{"wrr"}
+	compref		$tmp71 ___698_Nob $const17 	%argrw{"wrr"}
+	add		$tmp72 $tmp70 $tmp71 	%argrw{"wrr"}
+	mul		$tmp73 ___698_limit $tmp72 	%argrw{"wrr"}
+	gt		$tmp74 $tmp69 $tmp73 	%argrw{"wrr"}
+	neq		$tmp75 $tmp74 $const2 	%argrw{"wrr"}
+	assign		$tmp68 $tmp75 	%argrw{"wr"}
+	if		$tmp68 134 260 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:148
+#       weight[1] = 1.0;
+	compassign	___698_weight $const3 $const5 	%line{148} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:150
+#     else if (Nob[2] > limit * (Nob[0] + Nob[2]) && Nob[2] > limit * (Nob[1] + Nob[2])) {
+	compref		$tmp76 ___698_Nob $const17 	%line{150} %argrw{"wrr"}
+	compref		$tmp77 ___698_Nob $const2 	%argrw{"wrr"}
+	compref		$tmp78 ___698_Nob $const17 	%argrw{"wrr"}
+	add		$tmp79 $tmp77 $tmp78 	%argrw{"wrr"}
+	mul		$tmp80 ___698_limit $tmp79 	%argrw{"wrr"}
+	gt		$tmp81 $tmp76 $tmp80 	%argrw{"wrr"}
+	neq		$tmp82 $tmp81 $const2 	%argrw{"wrr"}
+	if		$tmp82 150 150 	%argrw{"r"}
+	compref		$tmp83 ___698_Nob $const17 	%argrw{"wrr"}
+	compref		$tmp84 ___698_Nob $const3 	%argrw{"wrr"}
+	compref		$tmp85 ___698_Nob $const17 	%argrw{"wrr"}
+	add		$tmp86 $tmp84 $tmp85 	%argrw{"wrr"}
+	mul		$tmp87 ___698_limit $tmp86 	%argrw{"wrr"}
+	gt		$tmp88 $tmp83 $tmp87 	%argrw{"wrr"}
+	neq		$tmp89 $tmp88 $const2 	%argrw{"wrr"}
+	assign		$tmp82 $tmp89 	%argrw{"wr"}
+	if		$tmp82 152 260 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:151
+#       weight[2] = 1.0;
+	compassign	___698_weight $const17 $const5 	%line{151} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:153
+#     else if (blend > 0.0) {
+	gt		$tmp90 ___698_blend $const10 	%line{153} %argrw{"wrr"}
+	if		$tmp90 259 260 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:155
+#       if (Nob[2] < (1.0 - limit) * (Nob[1] + Nob[0])) {
+	compref		$tmp91 ___698_Nob $const17 	%line{155} %argrw{"wrr"}
+	sub		$tmp92 $const5 ___698_limit 	%argrw{"wrr"}
+	compref		$tmp93 ___698_Nob $const3 	%argrw{"wrr"}
+	compref		$tmp94 ___698_Nob $const2 	%argrw{"wrr"}
+	add		$tmp95 $tmp93 $tmp94 	%argrw{"wrr"}
+	mul		$tmp96 $tmp92 $tmp95 	%argrw{"wrr"}
+	lt		$tmp97 $tmp91 $tmp96 	%argrw{"wrr"}
+	if		$tmp97 180 259 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:156
+#         weight[0] = Nob[0] / (Nob[0] + Nob[1]);
+	compref		$tmp98 ___698_Nob $const2 	%line{156} %argrw{"wrr"}
+	compref		$tmp99 ___698_Nob $const2 	%argrw{"wrr"}
+	compref		$tmp100 ___698_Nob $const3 	%argrw{"wrr"}
+	add		$tmp101 $tmp99 $tmp100 	%argrw{"wrr"}
+	div		$tmp102 $tmp98 $tmp101 	%argrw{"wrr"}
+	compassign	___698_weight $const2 $tmp102 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:157
+#         weight[0] = clamp((weight[0] - 0.5 * (1.0 - blend)) / blend, 0.0, 1.0);
+	compref		$tmp104 ___698_weight $const2 	%line{157} %argrw{"wrr"}
+	sub		$tmp105 $const5 ___698_blend 	%argrw{"wrr"}
+	mul		$tmp106 $const22 $tmp105 	%argrw{"wrr"}
+	sub		$tmp107 $tmp104 $tmp106 	%argrw{"wrr"}
+	div		$tmp108 $tmp107 ___698_blend 	%argrw{"wrr"}
+	functioncall	$const23 176 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\stdosl.h:231
+#   return max(min(x, maxval), minval);
+	min		$tmp109 $tmp108 $const5 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\stdosl.h"} %line{231} %argrw{"wrr"}
+	max		$tmp103 $tmp109 $const10 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:157
+#         weight[0] = clamp((weight[0] - 0.5 * (1.0 - blend)) / blend, 0.0, 1.0);
+	compassign	___698_weight $const2 $tmp103 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{157} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:158
+#         weight[1] = 1.0 - weight[0];
+	compref		$tmp110 ___698_weight $const2 	%line{158} %argrw{"wrr"}
+	sub		$tmp111 $const5 $tmp110 	%argrw{"wrr"}
+	compassign	___698_weight $const3 $tmp111 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:160
+#       else if (Nob[0] < (1.0 - limit) * (Nob[1] + Nob[2])) {
+	compref		$tmp112 ___698_Nob $const2 	%line{160} %argrw{"wrr"}
+	sub		$tmp113 $const5 ___698_limit 	%argrw{"wrr"}
+	compref		$tmp114 ___698_Nob $const3 	%argrw{"wrr"}
+	compref		$tmp115 ___698_Nob $const17 	%argrw{"wrr"}
+	add		$tmp116 $tmp114 $tmp115 	%argrw{"wrr"}
+	mul		$tmp117 $tmp113 $tmp116 	%argrw{"wrr"}
+	lt		$tmp118 $tmp112 $tmp117 	%argrw{"wrr"}
+	if		$tmp118 206 259 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:161
+#         weight[1] = Nob[1] / (Nob[1] + Nob[2]);
+	compref		$tmp119 ___698_Nob $const3 	%line{161} %argrw{"wrr"}
+	compref		$tmp120 ___698_Nob $const3 	%argrw{"wrr"}
+	compref		$tmp121 ___698_Nob $const17 	%argrw{"wrr"}
+	add		$tmp122 $tmp120 $tmp121 	%argrw{"wrr"}
+	div		$tmp123 $tmp119 $tmp122 	%argrw{"wrr"}
+	compassign	___698_weight $const3 $tmp123 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:162
+#         weight[1] = clamp((weight[1] - 0.5 * (1.0 - blend)) / blend, 0.0, 1.0);
+	compref		$tmp125 ___698_weight $const3 	%line{162} %argrw{"wrr"}
+	sub		$tmp126 $const5 ___698_blend 	%argrw{"wrr"}
+	mul		$tmp127 $const22 $tmp126 	%argrw{"wrr"}
+	sub		$tmp128 $tmp125 $tmp127 	%argrw{"wrr"}
+	div		$tmp129 $tmp128 ___698_blend 	%argrw{"wrr"}
+	functioncall	$const23 202 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\stdosl.h:231
+#   return max(min(x, maxval), minval);
+	min		$tmp130 $tmp129 $const5 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\stdosl.h"} %line{231} %argrw{"wrr"}
+	max		$tmp124 $tmp130 $const10 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:162
+#         weight[1] = clamp((weight[1] - 0.5 * (1.0 - blend)) / blend, 0.0, 1.0);
+	compassign	___698_weight $const3 $tmp124 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{162} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:163
+#         weight[2] = 1.0 - weight[1];
+	compref		$tmp131 ___698_weight $const3 	%line{163} %argrw{"wrr"}
+	sub		$tmp132 $const5 $tmp131 	%argrw{"wrr"}
+	compassign	___698_weight $const17 $tmp132 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:165
+#       else if (Nob[1] < (1.0 - limit) * (Nob[0] + Nob[2])) {
+	compref		$tmp133 ___698_Nob $const3 	%line{165} %argrw{"wrr"}
+	sub		$tmp134 $const5 ___698_limit 	%argrw{"wrr"}
+	compref		$tmp135 ___698_Nob $const2 	%argrw{"wrr"}
+	compref		$tmp136 ___698_Nob $const17 	%argrw{"wrr"}
+	add		$tmp137 $tmp135 $tmp136 	%argrw{"wrr"}
+	mul		$tmp138 $tmp134 $tmp137 	%argrw{"wrr"}
+	lt		$tmp139 $tmp133 $tmp138 	%argrw{"wrr"}
+	if		$tmp139 232 259 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:166
+#         weight[0] = Nob[0] / (Nob[0] + Nob[2]);
+	compref		$tmp140 ___698_Nob $const2 	%line{166} %argrw{"wrr"}
+	compref		$tmp141 ___698_Nob $const2 	%argrw{"wrr"}
+	compref		$tmp142 ___698_Nob $const17 	%argrw{"wrr"}
+	add		$tmp143 $tmp141 $tmp142 	%argrw{"wrr"}
+	div		$tmp144 $tmp140 $tmp143 	%argrw{"wrr"}
+	compassign	___698_weight $const2 $tmp144 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:167
+#         weight[0] = clamp((weight[0] - 0.5 * (1.0 - blend)) / blend, 0.0, 1.0);
+	compref		$tmp146 ___698_weight $const2 	%line{167} %argrw{"wrr"}
+	sub		$tmp147 $const5 ___698_blend 	%argrw{"wrr"}
+	mul		$tmp148 $const22 $tmp147 	%argrw{"wrr"}
+	sub		$tmp149 $tmp146 $tmp148 	%argrw{"wrr"}
+	div		$tmp150 $tmp149 ___698_blend 	%argrw{"wrr"}
+	functioncall	$const23 228 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\stdosl.h:231
+#   return max(min(x, maxval), minval);
+	min		$tmp151 $tmp150 $const5 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\stdosl.h"} %line{231} %argrw{"wrr"}
+	max		$tmp145 $tmp151 $const10 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:167
+#         weight[0] = clamp((weight[0] - 0.5 * (1.0 - blend)) / blend, 0.0, 1.0);
+	compassign	___698_weight $const2 $tmp145 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{167} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:168
+#         weight[2] = 1.0 - weight[0];
+	compref		$tmp152 ___698_weight $const2 	%line{168} %argrw{"wrr"}
+	sub		$tmp153 $const5 $tmp152 	%argrw{"wrr"}
+	compassign	___698_weight $const17 $tmp153 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:172
+#         weight[0] = ((2.0 - limit) * Nob[0] + (limit - 1.0)) / (2.0 * limit - 1.0);
+	sub		$tmp154 $const24 ___698_limit 	%line{172} %argrw{"wrr"}
+	compref		$tmp155 ___698_Nob $const2 	%argrw{"wrr"}
+	mul		$tmp156 $tmp154 $tmp155 	%argrw{"wrr"}
+	sub		$tmp157 ___698_limit $const5 	%argrw{"wrr"}
+	add		$tmp158 $tmp156 $tmp157 	%argrw{"wrr"}
+	mul		$tmp159 $const24 ___698_limit 	%argrw{"wrr"}
+	sub		$tmp160 $tmp159 $const5 	%argrw{"wrr"}
+	div		$tmp161 $tmp158 $tmp160 	%argrw{"wrr"}
+	compassign	___698_weight $const2 $tmp161 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:173
+#         weight[1] = ((2.0 - limit) * Nob[1] + (limit - 1.0)) / (2.0 * limit - 1.0);
+	sub		$tmp162 $const24 ___698_limit 	%line{173} %argrw{"wrr"}
+	compref		$tmp163 ___698_Nob $const3 	%argrw{"wrr"}
+	mul		$tmp164 $tmp162 $tmp163 	%argrw{"wrr"}
+	sub		$tmp165 ___698_limit $const5 	%argrw{"wrr"}
+	add		$tmp166 $tmp164 $tmp165 	%argrw{"wrr"}
+	mul		$tmp167 $const24 ___698_limit 	%argrw{"wrr"}
+	sub		$tmp168 $tmp167 $const5 	%argrw{"wrr"}
+	div		$tmp169 $tmp166 $tmp168 	%argrw{"wrr"}
+	compassign	___698_weight $const3 $tmp169 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:174
+#         weight[2] = ((2.0 - limit) * Nob[2] + (limit - 1.0)) / (2.0 * limit - 1.0);
+	sub		$tmp170 $const24 ___698_limit 	%line{174} %argrw{"wrr"}
+	compref		$tmp171 ___698_Nob $const17 	%argrw{"wrr"}
+	mul		$tmp172 $tmp170 $tmp171 	%argrw{"wrr"}
+	sub		$tmp173 ___698_limit $const5 	%argrw{"wrr"}
+	add		$tmp174 $tmp172 $tmp173 	%argrw{"wrr"}
+	mul		$tmp175 $const24 ___698_limit 	%argrw{"wrr"}
+	sub		$tmp176 $tmp175 $const5 	%argrw{"wrr"}
+	div		$tmp177 $tmp174 $tmp176 	%argrw{"wrr"}
+	compassign	___698_weight $const17 $tmp177 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:179
+#       weight[0] = 1.0;
+	compassign	___698_weight $const2 $const5 	%line{179} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:182
+#     Color = color(0.0, 0.0, 0.0);
+	assign		Color $const25 	%line{182} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:183
+#     Alpha = 0.0;
+	assign		Alpha $const10 	%line{183} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:187
+#     if (weight[0] > 0.0) {
+	compref		$tmp178 ___698_weight $const2 	%line{187} %argrw{"wrr"}
+	gt		$tmp179 $tmp178 $const10 	%argrw{"wrr"}
+	if		$tmp179 343 343 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:188
+#       Color += weight[0] * image_texture_lookup(filename,
+	compref		$tmp180 ___698_weight $const2 	%line{188} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:189
+#                                                 p[1],
+	compref		$tmp182 p $const3 	%line{189} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:190
+#                                                 p[2],
+	compref		$tmp183 p $const17 	%line{190} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:197
+#                                                 extension);
+	functioncall	$const4 338 	%line{197} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:70
+#       filename, u, 1.0 - v, "wrap", extension, "interp", interpolation, "alpha", Alpha);
+	sub		$tmp184 $const5 $tmp183 	%line{70} %argrw{"wrr"}
+	texture		___693_rgb filename $tmp182 $tmp184 $const6 extension $const7 interpolation $const8 ___698_tmp_alpha 	%argrw{"wrrrrrrrrw"} %argderivs{2,3}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:72
+#   if (ignore_alpha) {
+	if		ignore_alpha 273 289 	%line{72} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:73
+#     Alpha = 1.0;
+	assign		___698_tmp_alpha $const5 	%line{73} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:75
+#   else if (unassociate_alpha) {
+	if		unassociate_alpha 289 289 	%line{75} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:76
+#     rgb = color_unpremultiply(rgb, Alpha);
+	functioncall	$const9 285 	%line{76} %argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:51
+#   if (alpha != 1.0 && alpha != 0.0)
+	neq		$tmp185 ___698_tmp_alpha $const5 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h"} %line{51} %argrw{"wrr"}
+	neq		$tmp186 $tmp185 $const2 	%argrw{"wrr"}
+	if		$tmp186 281 281 	%argrw{"r"}
+	neq		$tmp187 ___698_tmp_alpha $const10 	%argrw{"wrr"}
+	neq		$tmp188 $tmp187 $const2 	%argrw{"wrr"}
+	assign		$tmp186 $tmp188 	%argrw{"wr"}
+	if		$tmp186 284 284 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:52
+#     return c / alpha;
+	div		___693_rgb ___693_rgb ___698_tmp_alpha 	%line{52} %argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:54
+#   return c;
+	assign		___693_rgb ___693_rgb 	%line{54} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:78
+#     if (!is_float)
+	eq		$tmp189 is_float $const2 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{78} %argrw{"wrr"}
+	if		$tmp189 289 289 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:79
+#       rgb = min(rgb, 1.0);
+	assign		$tmp190 $const5 	%line{79} %argrw{"wr"}
+	min		___693_rgb ___693_rgb $tmp190 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:82
+#   if (compress_as_srgb) {
+	if		compress_as_srgb 337 337 	%line{82} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:83
+#     rgb = color_srgb_to_scene_linear(rgb);
+	functioncall	$const11 337 	%line{83} %argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:37
+#   return color(color_srgb_to_scene_linear(c[0]),
+	compref		$tmp192 ___693_rgb $const2 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h"} %line{37} %argrw{"wrr"}
+	functioncall	$const11 306 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp193 $tmp192 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp193 301 306 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp194 $tmp192 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp194 298 300 	%argrw{"r"}
+	assign		$tmp191 $const10 	%argrw{"wr"}
+	div		$tmp195 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp191 $tmp192 $tmp195 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp196 $tmp192 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp197 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp198 $tmp196 $tmp197 	%argrw{"wrr"}
+	pow		$tmp191 $tmp198 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:38
+#                color_srgb_to_scene_linear(c[1]),
+	compref		$tmp200 ___693_rgb $const3 	%line{38} %argrw{"wrr"}
+	functioncall	$const11 321 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp201 $tmp200 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp201 316 321 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp202 $tmp200 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp202 313 315 	%argrw{"r"}
+	assign		$tmp199 $const10 	%argrw{"wr"}
+	div		$tmp203 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp199 $tmp200 $tmp203 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp204 $tmp200 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp205 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp206 $tmp204 $tmp205 	%argrw{"wrr"}
+	pow		$tmp199 $tmp206 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:39
+#                color_srgb_to_scene_linear(c[2]));
+	compref		$tmp208 ___693_rgb $const17 	%line{39} %argrw{"wrr"}
+	functioncall	$const11 336 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp209 $tmp208 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp209 331 336 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp210 $tmp208 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp210 328 330 	%argrw{"r"}
+	assign		$tmp207 $const10 	%argrw{"wr"}
+	div		$tmp211 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp207 $tmp208 $tmp211 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp212 $tmp208 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp213 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp214 $tmp212 $tmp213 	%argrw{"wrr"}
+	pow		$tmp207 $tmp214 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:39
+#                color_srgb_to_scene_linear(c[2]));
+	color		___693_rgb $tmp191 $tmp199 $tmp207 	%line{39} %argrw{"wrrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:86
+#   return rgb;
+	assign		$tmp181 ___693_rgb 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{86} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:197
+#                                                 extension);
+	mul		$tmp215 $tmp180 $tmp181 	%line{197} %argrw{"wrr"}
+	add		Color Color $tmp215 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:198
+#       Alpha += weight[0] * tmp_alpha;
+	compref		$tmp216 ___698_weight $const2 	%line{198} %argrw{"wrr"}
+	mul		$tmp217 $tmp216 ___698_tmp_alpha 	%argrw{"wrr"}
+	add		Alpha Alpha $tmp217 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:200
+#     if (weight[1] > 0.0) {
+	compref		$tmp218 ___698_weight $const3 	%line{200} %argrw{"wrr"}
+	gt		$tmp219 $tmp218 $const10 	%argrw{"wrr"}
+	if		$tmp219 424 424 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:201
+#       Color += weight[1] * image_texture_lookup(filename,
+	compref		$tmp220 ___698_weight $const3 	%line{201} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:202
+#                                                 p[0],
+	compref		$tmp222 p $const2 	%line{202} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:203
+#                                                 p[2],
+	compref		$tmp223 p $const17 	%line{203} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:210
+#                                                 extension);
+	functioncall	$const4 419 	%line{210} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:70
+#       filename, u, 1.0 - v, "wrap", extension, "interp", interpolation, "alpha", Alpha);
+	sub		$tmp224 $const5 $tmp223 	%line{70} %argrw{"wrr"}
+	texture		___693_rgb filename $tmp222 $tmp224 $const6 extension $const7 interpolation $const8 ___698_tmp_alpha 	%argrw{"wrrrrrrrrw"} %argderivs{2,3}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:72
+#   if (ignore_alpha) {
+	if		ignore_alpha 354 370 	%line{72} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:73
+#     Alpha = 1.0;
+	assign		___698_tmp_alpha $const5 	%line{73} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:75
+#   else if (unassociate_alpha) {
+	if		unassociate_alpha 370 370 	%line{75} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:76
+#     rgb = color_unpremultiply(rgb, Alpha);
+	functioncall	$const9 366 	%line{76} %argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:51
+#   if (alpha != 1.0 && alpha != 0.0)
+	neq		$tmp225 ___698_tmp_alpha $const5 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h"} %line{51} %argrw{"wrr"}
+	neq		$tmp226 $tmp225 $const2 	%argrw{"wrr"}
+	if		$tmp226 362 362 	%argrw{"r"}
+	neq		$tmp227 ___698_tmp_alpha $const10 	%argrw{"wrr"}
+	neq		$tmp228 $tmp227 $const2 	%argrw{"wrr"}
+	assign		$tmp226 $tmp228 	%argrw{"wr"}
+	if		$tmp226 365 365 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:52
+#     return c / alpha;
+	div		___693_rgb ___693_rgb ___698_tmp_alpha 	%line{52} %argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:54
+#   return c;
+	assign		___693_rgb ___693_rgb 	%line{54} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:78
+#     if (!is_float)
+	eq		$tmp229 is_float $const2 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{78} %argrw{"wrr"}
+	if		$tmp229 370 370 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:79
+#       rgb = min(rgb, 1.0);
+	assign		$tmp230 $const5 	%line{79} %argrw{"wr"}
+	min		___693_rgb ___693_rgb $tmp230 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:82
+#   if (compress_as_srgb) {
+	if		compress_as_srgb 418 418 	%line{82} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:83
+#     rgb = color_srgb_to_scene_linear(rgb);
+	functioncall	$const11 418 	%line{83} %argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:37
+#   return color(color_srgb_to_scene_linear(c[0]),
+	compref		$tmp232 ___693_rgb $const2 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h"} %line{37} %argrw{"wrr"}
+	functioncall	$const11 387 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp233 $tmp232 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp233 382 387 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp234 $tmp232 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp234 379 381 	%argrw{"r"}
+	assign		$tmp231 $const10 	%argrw{"wr"}
+	div		$tmp235 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp231 $tmp232 $tmp235 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp236 $tmp232 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp237 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp238 $tmp236 $tmp237 	%argrw{"wrr"}
+	pow		$tmp231 $tmp238 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:38
+#                color_srgb_to_scene_linear(c[1]),
+	compref		$tmp240 ___693_rgb $const3 	%line{38} %argrw{"wrr"}
+	functioncall	$const11 402 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp241 $tmp240 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp241 397 402 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp242 $tmp240 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp242 394 396 	%argrw{"r"}
+	assign		$tmp239 $const10 	%argrw{"wr"}
+	div		$tmp243 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp239 $tmp240 $tmp243 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp244 $tmp240 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp245 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp246 $tmp244 $tmp245 	%argrw{"wrr"}
+	pow		$tmp239 $tmp246 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:39
+#                color_srgb_to_scene_linear(c[2]));
+	compref		$tmp248 ___693_rgb $const17 	%line{39} %argrw{"wrr"}
+	functioncall	$const11 417 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp249 $tmp248 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp249 412 417 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp250 $tmp248 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp250 409 411 	%argrw{"r"}
+	assign		$tmp247 $const10 	%argrw{"wr"}
+	div		$tmp251 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp247 $tmp248 $tmp251 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp252 $tmp248 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp253 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp254 $tmp252 $tmp253 	%argrw{"wrr"}
+	pow		$tmp247 $tmp254 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:39
+#                color_srgb_to_scene_linear(c[2]));
+	color		___693_rgb $tmp231 $tmp239 $tmp247 	%line{39} %argrw{"wrrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:86
+#   return rgb;
+	assign		$tmp221 ___693_rgb 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{86} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:210
+#                                                 extension);
+	mul		$tmp255 $tmp220 $tmp221 	%line{210} %argrw{"wrr"}
+	add		Color Color $tmp255 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:211
+#       Alpha += weight[1] * tmp_alpha;
+	compref		$tmp256 ___698_weight $const3 	%line{211} %argrw{"wrr"}
+	mul		$tmp257 $tmp256 ___698_tmp_alpha 	%argrw{"wrr"}
+	add		Alpha Alpha $tmp257 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:213
+#     if (weight[2] > 0.0) {
+	compref		$tmp258 ___698_weight $const17 	%line{213} %argrw{"wrr"}
+	gt		$tmp259 $tmp258 $const10 	%argrw{"wrr"}
+	if		$tmp259 505 505 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:214
+#       Color += weight[2] * image_texture_lookup(filename,
+	compref		$tmp260 ___698_weight $const17 	%line{214} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:215
+#                                                 p[1],
+	compref		$tmp262 p $const3 	%line{215} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:216
+#                                                 p[0],
+	compref		$tmp263 p $const2 	%line{216} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:223
+#                                                 extension);
+	functioncall	$const4 500 	%line{223} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:70
+#       filename, u, 1.0 - v, "wrap", extension, "interp", interpolation, "alpha", Alpha);
+	sub		$tmp264 $const5 $tmp263 	%line{70} %argrw{"wrr"}
+	texture		___693_rgb filename $tmp262 $tmp264 $const6 extension $const7 interpolation $const8 ___698_tmp_alpha 	%argrw{"wrrrrrrrrw"} %argderivs{2,3}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:72
+#   if (ignore_alpha) {
+	if		ignore_alpha 435 451 	%line{72} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:73
+#     Alpha = 1.0;
+	assign		___698_tmp_alpha $const5 	%line{73} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:75
+#   else if (unassociate_alpha) {
+	if		unassociate_alpha 451 451 	%line{75} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:76
+#     rgb = color_unpremultiply(rgb, Alpha);
+	functioncall	$const9 447 	%line{76} %argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:51
+#   if (alpha != 1.0 && alpha != 0.0)
+	neq		$tmp265 ___698_tmp_alpha $const5 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h"} %line{51} %argrw{"wrr"}
+	neq		$tmp266 $tmp265 $const2 	%argrw{"wrr"}
+	if		$tmp266 443 443 	%argrw{"r"}
+	neq		$tmp267 ___698_tmp_alpha $const10 	%argrw{"wrr"}
+	neq		$tmp268 $tmp267 $const2 	%argrw{"wrr"}
+	assign		$tmp266 $tmp268 	%argrw{"wr"}
+	if		$tmp266 446 446 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:52
+#     return c / alpha;
+	div		___693_rgb ___693_rgb ___698_tmp_alpha 	%line{52} %argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:54
+#   return c;
+	assign		___693_rgb ___693_rgb 	%line{54} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:78
+#     if (!is_float)
+	eq		$tmp269 is_float $const2 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{78} %argrw{"wrr"}
+	if		$tmp269 451 451 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:79
+#       rgb = min(rgb, 1.0);
+	assign		$tmp270 $const5 	%line{79} %argrw{"wr"}
+	min		___693_rgb ___693_rgb $tmp270 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:82
+#   if (compress_as_srgb) {
+	if		compress_as_srgb 499 499 	%line{82} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:83
+#     rgb = color_srgb_to_scene_linear(rgb);
+	functioncall	$const11 499 	%line{83} %argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:37
+#   return color(color_srgb_to_scene_linear(c[0]),
+	compref		$tmp272 ___693_rgb $const2 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h"} %line{37} %argrw{"wrr"}
+	functioncall	$const11 468 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp273 $tmp272 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp273 463 468 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp274 $tmp272 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp274 460 462 	%argrw{"r"}
+	assign		$tmp271 $const10 	%argrw{"wr"}
+	div		$tmp275 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp271 $tmp272 $tmp275 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp276 $tmp272 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp277 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp278 $tmp276 $tmp277 	%argrw{"wrr"}
+	pow		$tmp271 $tmp278 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:38
+#                color_srgb_to_scene_linear(c[1]),
+	compref		$tmp280 ___693_rgb $const3 	%line{38} %argrw{"wrr"}
+	functioncall	$const11 483 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp281 $tmp280 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp281 478 483 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp282 $tmp280 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp282 475 477 	%argrw{"r"}
+	assign		$tmp279 $const10 	%argrw{"wr"}
+	div		$tmp283 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp279 $tmp280 $tmp283 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp284 $tmp280 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp285 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp286 $tmp284 $tmp285 	%argrw{"wrr"}
+	pow		$tmp279 $tmp286 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:39
+#                color_srgb_to_scene_linear(c[2]));
+	compref		$tmp288 ___693_rgb $const17 	%line{39} %argrw{"wrr"}
+	functioncall	$const11 498 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp289 $tmp288 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp289 493 498 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp290 $tmp288 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp290 490 492 	%argrw{"r"}
+	assign		$tmp287 $const10 	%argrw{"wr"}
+	div		$tmp291 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp287 $tmp288 $tmp291 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp292 $tmp288 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp293 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp294 $tmp292 $tmp293 	%argrw{"wrr"}
+	pow		$tmp287 $tmp294 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:39
+#                color_srgb_to_scene_linear(c[2]));
+	color		___693_rgb $tmp271 $tmp279 $tmp287 	%line{39} %argrw{"wrrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:86
+#   return rgb;
+	assign		$tmp261 ___693_rgb 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{86} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:223
+#                                                 extension);
+	mul		$tmp295 $tmp260 $tmp261 	%line{223} %argrw{"wrr"}
+	add		Color Color $tmp295 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:224
+#       Alpha += weight[2] * tmp_alpha;
+	compref		$tmp296 ___698_weight $const17 	%line{224} %argrw{"wrr"}
+	mul		$tmp297 $tmp296 ___698_tmp_alpha 	%argrw{"wrr"}
+	add		Alpha Alpha $tmp297 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:227
+#   else if (projection == "sphere") {
+	eq		$tmp298 projection $const26 	%line{227} %argrw{"wrr"}
+	if		$tmp298 610 712 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:228
+#     point projected = map_to_sphere(texco_remap_square(p));
+	functioncall	$const27 510 	%line{228} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:22
+#   return (co - point(0.5, 0.5, 0.5)) * 2.0;
+	sub		$tmp301 p $const28 	%line{22} %argrw{"wrr"}
+	mul		$tmp299 $tmp301 $const24 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:228
+#     point projected = map_to_sphere(texco_remap_square(p));
+	functioncall	$const29 538 	%line{228} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:41
+#   float len = length(dir);
+	length		___688_len $tmp299 	%line{41} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:43
+#   if (len > 0.0) {
+	gt		$tmp302 ___688_len $const10 	%line{43} %argrw{"wrr"}
+	if		$tmp302 535 537 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:44
+#     if (dir[0] == 0.0 && dir[1] == 0.0) {
+	compref		$tmp303 $tmp299 $const2 	%line{44} %argrw{"wrr"}
+	eq		$tmp304 $tmp303 $const10 	%argrw{"wrr"}
+	neq		$tmp305 $tmp304 $const2 	%argrw{"wrr"}
+	if		$tmp305 522 522 	%argrw{"r"}
+	compref		$tmp306 $tmp299 $const3 	%argrw{"wrr"}
+	eq		$tmp307 $tmp306 $const10 	%argrw{"wrr"}
+	neq		$tmp308 $tmp307 $const2 	%argrw{"wrr"}
+	assign		$tmp305 $tmp308 	%argrw{"wr"}
+	if		$tmp305 524 530 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:45
+#       u = 0.0; /* Othwise domain error. */
+	assign		___688_u $const10 	%line{45} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:48
+#       u = (1.0 - atan2(dir[0], dir[1]) / M_PI) / 2.0;
+	compref		$tmp310 $tmp299 $const2 	%line{48} %argrw{"wrr"}
+	compref		$tmp311 $tmp299 $const3 	%argrw{"wrr"}
+	atan2		$tmp309 $tmp310 $tmp311 	%argrw{"wrr"}
+	div		$tmp312 $tmp309 $const30 	%argrw{"wrr"}
+	sub		$tmp313 $const5 $tmp312 	%argrw{"wrr"}
+	div		___688_u $tmp313 $const24 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:50
+#     v = 1.0 - acos(dir[2] / len) / M_PI;
+	compref		$tmp315 $tmp299 $const17 	%line{50} %argrw{"wrr"}
+	div		$tmp316 $tmp315 ___688_len 	%argrw{"wrr"}
+	acos		$tmp314 $tmp316 	%argrw{"wr"}
+	div		$tmp317 $tmp314 $const30 	%argrw{"wrr"}
+	sub		___688_v $const5 $tmp317 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:53
+#     v = u = 0.0; /* To avoid un-initialized variables. */
+	assign		___688_u $const10 	%line{53} %argrw{"wr"}
+	assign		___688_v ___688_u 	%argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:55
+#   return point(u, v, 0.0);
+	point		___711_projected ___688_u ___688_v $const10 	%line{55} %argrw{"wrrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:230
+#                                  projected[0],
+	compref		$tmp318 ___711_projected $const2 	%line{230} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:231
+#                                  projected[1],
+	compref		$tmp319 ___711_projected $const3 	%line{231} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:238
+#                                  extension);
+	functioncall	$const4 610 	%line{238} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:70
+#       filename, u, 1.0 - v, "wrap", extension, "interp", interpolation, "alpha", Alpha);
+	sub		$tmp320 $const5 $tmp319 	%line{70} %argrw{"wrr"}
+	texture		___693_rgb filename $tmp318 $tmp320 $const6 extension $const7 interpolation $const8 Alpha 	%argrw{"wrrrrrrrrw"} %argderivs{2,3}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:72
+#   if (ignore_alpha) {
+	if		ignore_alpha 545 561 	%line{72} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:73
+#     Alpha = 1.0;
+	assign		Alpha $const5 	%line{73} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:75
+#   else if (unassociate_alpha) {
+	if		unassociate_alpha 561 561 	%line{75} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:76
+#     rgb = color_unpremultiply(rgb, Alpha);
+	functioncall	$const9 557 	%line{76} %argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:51
+#   if (alpha != 1.0 && alpha != 0.0)
+	neq		$tmp321 Alpha $const5 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h"} %line{51} %argrw{"wrr"}
+	neq		$tmp322 $tmp321 $const2 	%argrw{"wrr"}
+	if		$tmp322 553 553 	%argrw{"r"}
+	neq		$tmp323 Alpha $const10 	%argrw{"wrr"}
+	neq		$tmp324 $tmp323 $const2 	%argrw{"wrr"}
+	assign		$tmp322 $tmp324 	%argrw{"wr"}
+	if		$tmp322 556 556 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:52
+#     return c / alpha;
+	div		___693_rgb ___693_rgb Alpha 	%line{52} %argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:54
+#   return c;
+	assign		___693_rgb ___693_rgb 	%line{54} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:78
+#     if (!is_float)
+	eq		$tmp325 is_float $const2 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{78} %argrw{"wrr"}
+	if		$tmp325 561 561 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:79
+#       rgb = min(rgb, 1.0);
+	assign		$tmp326 $const5 	%line{79} %argrw{"wr"}
+	min		___693_rgb ___693_rgb $tmp326 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:82
+#   if (compress_as_srgb) {
+	if		compress_as_srgb 609 609 	%line{82} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:83
+#     rgb = color_srgb_to_scene_linear(rgb);
+	functioncall	$const11 609 	%line{83} %argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:37
+#   return color(color_srgb_to_scene_linear(c[0]),
+	compref		$tmp328 ___693_rgb $const2 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h"} %line{37} %argrw{"wrr"}
+	functioncall	$const11 578 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp329 $tmp328 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp329 573 578 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp330 $tmp328 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp330 570 572 	%argrw{"r"}
+	assign		$tmp327 $const10 	%argrw{"wr"}
+	div		$tmp331 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp327 $tmp328 $tmp331 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp332 $tmp328 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp333 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp334 $tmp332 $tmp333 	%argrw{"wrr"}
+	pow		$tmp327 $tmp334 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:38
+#                color_srgb_to_scene_linear(c[1]),
+	compref		$tmp336 ___693_rgb $const3 	%line{38} %argrw{"wrr"}
+	functioncall	$const11 593 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp337 $tmp336 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp337 588 593 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp338 $tmp336 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp338 585 587 	%argrw{"r"}
+	assign		$tmp335 $const10 	%argrw{"wr"}
+	div		$tmp339 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp335 $tmp336 $tmp339 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp340 $tmp336 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp341 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp342 $tmp340 $tmp341 	%argrw{"wrr"}
+	pow		$tmp335 $tmp342 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:39
+#                color_srgb_to_scene_linear(c[2]));
+	compref		$tmp344 ___693_rgb $const17 	%line{39} %argrw{"wrr"}
+	functioncall	$const11 608 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp345 $tmp344 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp345 603 608 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp346 $tmp344 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp346 600 602 	%argrw{"r"}
+	assign		$tmp343 $const10 	%argrw{"wr"}
+	div		$tmp347 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp343 $tmp344 $tmp347 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp348 $tmp344 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp349 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp350 $tmp348 $tmp349 	%argrw{"wrr"}
+	pow		$tmp343 $tmp350 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:39
+#                color_srgb_to_scene_linear(c[2]));
+	color		___693_rgb $tmp327 $tmp335 $tmp343 	%line{39} %argrw{"wrrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:86
+#   return rgb;
+	assign		Color ___693_rgb 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{86} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:240
+#   else if (projection == "tube") {
+	eq		$tmp351 projection $const31 	%line{240} %argrw{"wrr"}
+	if		$tmp351 712 712 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:241
+#     point projected = map_to_tube(texco_remap_square(p));
+	functioncall	$const27 615 	%line{241} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:22
+#   return (co - point(0.5, 0.5, 0.5)) * 2.0;
+	sub		$tmp354 p $const28 	%line{22} %argrw{"wrr"}
+	mul		$tmp352 $tmp354 $const24 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:241
+#     point projected = map_to_tube(texco_remap_square(p));
+	functioncall	$const32 640 	%line{241} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:28
+#   v = (dir[2] + 1.0) * 0.5;
+	compref		$tmp355 $tmp352 $const17 	%line{28} %argrw{"wrr"}
+	add		$tmp356 $tmp355 $const5 	%argrw{"wrr"}
+	mul		___685_v $tmp356 $const22 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:29
+#   float len = sqrt(dir[0] * dir[0] + dir[1] * dir[1]);
+	compref		$tmp357 $tmp352 $const2 	%line{29} %argrw{"wrr"}
+	compref		$tmp358 $tmp352 $const2 	%argrw{"wrr"}
+	mul		$tmp359 $tmp357 $tmp358 	%argrw{"wrr"}
+	compref		$tmp360 $tmp352 $const3 	%argrw{"wrr"}
+	compref		$tmp361 $tmp352 $const3 	%argrw{"wrr"}
+	mul		$tmp362 $tmp360 $tmp361 	%argrw{"wrr"}
+	add		$tmp363 $tmp359 $tmp362 	%argrw{"wrr"}
+	sqrt		___685_len $tmp363 	%argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:30
+#   if (len > 0.0) {
+	gt		$tmp364 ___685_len $const10 	%line{30} %argrw{"wrr"}
+	if		$tmp364 637 639 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:31
+#     u = (1.0 - (atan2(dir[0] / len, dir[1] / len) / M_PI)) * 0.5;
+	compref		$tmp366 $tmp352 $const2 	%line{31} %argrw{"wrr"}
+	div		$tmp367 $tmp366 ___685_len 	%argrw{"wrr"}
+	compref		$tmp368 $tmp352 $const3 	%argrw{"wrr"}
+	div		$tmp369 $tmp368 ___685_len 	%argrw{"wrr"}
+	atan2		$tmp365 $tmp367 $tmp369 	%argrw{"wrr"}
+	div		$tmp370 $tmp365 $const30 	%argrw{"wrr"}
+	sub		$tmp371 $const5 $tmp370 	%argrw{"wrr"}
+	mul		___685_u $tmp371 $const22 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:34
+#     v = u = 0.0; /* To avoid un-initialized variables. */
+	assign		___685_u $const10 	%line{34} %argrw{"wr"}
+	assign		___685_v ___685_u 	%argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:36
+#   return point(u, v, 0.0);
+	point		___712_projected ___685_u ___685_v $const10 	%line{36} %argrw{"wrrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:243
+#                                  projected[0],
+	compref		$tmp372 ___712_projected $const2 	%line{243} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:244
+#                                  projected[1],
+	compref		$tmp373 ___712_projected $const3 	%line{244} %argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:251
+#                                  extension);
+	functioncall	$const4 712 	%line{251} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:70
+#       filename, u, 1.0 - v, "wrap", extension, "interp", interpolation, "alpha", Alpha);
+	sub		$tmp374 $const5 $tmp373 	%line{70} %argrw{"wrr"}
+	texture		___693_rgb filename $tmp372 $tmp374 $const6 extension $const7 interpolation $const8 Alpha 	%argrw{"wrrrrrrrrw"} %argderivs{2,3}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:72
+#   if (ignore_alpha) {
+	if		ignore_alpha 647 663 	%line{72} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:73
+#     Alpha = 1.0;
+	assign		Alpha $const5 	%line{73} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:75
+#   else if (unassociate_alpha) {
+	if		unassociate_alpha 663 663 	%line{75} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:76
+#     rgb = color_unpremultiply(rgb, Alpha);
+	functioncall	$const9 659 	%line{76} %argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:51
+#   if (alpha != 1.0 && alpha != 0.0)
+	neq		$tmp375 Alpha $const5 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h"} %line{51} %argrw{"wrr"}
+	neq		$tmp376 $tmp375 $const2 	%argrw{"wrr"}
+	if		$tmp376 655 655 	%argrw{"r"}
+	neq		$tmp377 Alpha $const10 	%argrw{"wrr"}
+	neq		$tmp378 $tmp377 $const2 	%argrw{"wrr"}
+	assign		$tmp376 $tmp378 	%argrw{"wr"}
+	if		$tmp376 658 658 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:52
+#     return c / alpha;
+	div		___693_rgb ___693_rgb Alpha 	%line{52} %argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:54
+#   return c;
+	assign		___693_rgb ___693_rgb 	%line{54} %argrw{"wr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:78
+#     if (!is_float)
+	eq		$tmp379 is_float $const2 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{78} %argrw{"wrr"}
+	if		$tmp379 663 663 	%argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:79
+#       rgb = min(rgb, 1.0);
+	assign		$tmp380 $const5 	%line{79} %argrw{"wr"}
+	min		___693_rgb ___693_rgb $tmp380 	%argrw{"wrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:82
+#   if (compress_as_srgb) {
+	if		compress_as_srgb 711 711 	%line{82} %argrw{"r"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:83
+#     rgb = color_srgb_to_scene_linear(rgb);
+	functioncall	$const11 711 	%line{83} %argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:37
+#   return color(color_srgb_to_scene_linear(c[0]),
+	compref		$tmp382 ___693_rgb $const2 	%filename{"C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h"} %line{37} %argrw{"wrr"}
+	functioncall	$const11 680 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp383 $tmp382 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp383 675 680 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp384 $tmp382 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp384 672 674 	%argrw{"r"}
+	assign		$tmp381 $const10 	%argrw{"wr"}
+	div		$tmp385 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp381 $tmp382 $tmp385 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp386 $tmp382 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp387 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp388 $tmp386 $tmp387 	%argrw{"wrr"}
+	pow		$tmp381 $tmp388 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:38
+#                color_srgb_to_scene_linear(c[1]),
+	compref		$tmp390 ___693_rgb $const3 	%line{38} %argrw{"wrr"}
+	functioncall	$const11 695 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp391 $tmp390 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp391 690 695 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp392 $tmp390 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp392 687 689 	%argrw{"r"}
+	assign		$tmp389 $const10 	%argrw{"wr"}
+	div		$tmp393 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp389 $tmp390 $tmp393 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp394 $tmp390 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp395 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp396 $tmp394 $tmp395 	%argrw{"wrr"}
+	pow		$tmp389 $tmp396 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:39
+#                color_srgb_to_scene_linear(c[2]));
+	compref		$tmp398 ___693_rgb $const17 	%line{39} %argrw{"wrr"}
+	functioncall	$const11 710 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:21
+#   if (c < 0.04045)
+	lt		$tmp399 $tmp398 $const12 	%line{21} %argrw{"wrr"}
+	if		$tmp399 705 710 	%argrw{"r"}
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:22
+#     return (c < 0.0) ? 0.0 : c * (1.0 / 12.92);
+	lt		$tmp400 $tmp398 $const10 	%line{22} %argrw{"wrr"}
+	if		$tmp400 702 704 	%argrw{"r"}
+	assign		$tmp397 $const10 	%argrw{"wr"}
+	div		$tmp401 $const5 $const13 	%argrw{"wrr"}
+	mul		$tmp397 $tmp398 $tmp401 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:24
+#     return pow((c + 0.055) * (1.0 / 1.055), 2.4);
+	add		$tmp402 $tmp398 $const14 	%line{24} %argrw{"wrr"}
+	div		$tmp403 $const5 $const15 	%argrw{"wrr"}
+	mul		$tmp404 $tmp402 $tmp403 	%argrw{"wrr"}
+	pow		$tmp397 $tmp404 $const16 	%argrw{"wrr"}
+	return
+# C:\b\win64_cmake_vs2017\win64_cmake_vs2017\blender.git\intern\cycles\kernel\shaders\node_color.h:39
+#                color_srgb_to_scene_linear(c[2]));
+	color		___693_rgb $tmp381 $tmp389 $tmp397 	%line{39} %argrw{"wrrr"}
+# C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl:86
+#   return rgb;
+	assign		Color ___693_rgb 	%filename{"C:/b/win64_cmake_vs2017/win64_cmake_vs2017/blender.git/intern/cycles/kernel/shaders/node_image_texture.osl"} %line{86} %argrw{"wr"}
+	end

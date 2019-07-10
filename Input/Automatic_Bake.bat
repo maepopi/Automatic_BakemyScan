@@ -10,9 +10,11 @@ for %%I in (%1) do set name=%%~nxI
 
 mkdir ..\Output\%name%
 
+set outFolder=..\Output\%name%
+
 set inPath=..\Input\%name%\%name%.fbx
 
-set outPath=..\Output\%name%\%name%.gltf
+set outPath=..\Output\%name%\%name%.obj
 
 set colorPath=..\Input\%name%\%name%_diffuse.png
 
@@ -22,7 +24,7 @@ set method=DECIMATE
 
 set resolution=1024
 
-
+set word=Bouh
 
 
 
@@ -30,9 +32,15 @@ set resolution=1024
 
 %blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %target% -R %resolution% -c %colorPath%
 
-ren %outPath%.glb %name%.glb
+REM ren %outPath%.glb %name%.glb
 
-%blenderPath% -b -P %convertScriptPath% 
+ren %outPath% %name%_Mesh.obj
+
+ren %outFolder%\%name%_albedo.jpg %name%_diffuse_%resolution%.jpg
+ren %outFolder%\%name%_normal.jpg %name%_normal_%resolution%.jpg
+
+
+
 
 
 

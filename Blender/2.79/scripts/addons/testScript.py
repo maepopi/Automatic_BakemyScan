@@ -1,2 +1,8 @@
+import sys
+import argparse
 
-print("chat")
+program_name = sys.argv[0]
+arguments = sys.argv[1:]
+
+
+print(sys.argv[5])
