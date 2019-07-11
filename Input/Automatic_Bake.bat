@@ -16,15 +16,16 @@ set outputFullPath=%1\..\..\Output\%name%
 
 set outFolder=..\Output\%name%
 
-set inPath=..\Input\%name%\%name%.fbx
+set inPath=..\Input\%name%\%name%.obj
 
 set outPath=..\Output\%name%\%name%.obj
 
-set colorPath=..\Input\%name%\%name%_diffuse.png
+REM for now let's assume there will only be a jpg for the texture, and that normals and AO will be baked anyway from the high poly model. So no need to precise _diffuse after the %name%
+set colorPath=..\Input\%name%\%name%.jpg
 
-set target=1500
+set target=5000
 
-set method=DECIMATE
+set method=MESHLAB
 
 set resolution=1024
 
@@ -46,7 +47,7 @@ mkdir %outputFullPath%\Glb
 set diffusepath=%outputFullPath%\%name%_diffuse_%resolution%.jpg
 set normalpath=%outputFullPath%\%name%_normal_%resolution%.jpg
 set exportpath=%outputFullPath%\Glb
-set exportname=%name%_glb
+set exportname=%name%_Mesh_%target%
 
 
 
@@ -54,5 +55,6 @@ set exportname=%name%_glb
 %blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname%
 
 
+echo The process is done ! You can close the console !
 
-
+pause
