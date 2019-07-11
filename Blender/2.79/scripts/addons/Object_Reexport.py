@@ -224,8 +224,10 @@ def run():
         #On détermine le chemin final et le nom d'export de l'objet
         export_filepath = os.path.join(export_folderpath, sys.argv[9])
 
+
         #On exporte
-        bpy.ops.export_scene.gltf(filepath=export_filepath)
+        # Note que dans les arguments on peut exporter en GLTF_SEPARATE, GLB ou GLTF_EMBEDDED
+        bpy.ops.export_scene.gltf(filepath=export_filepath, export_format="GLB", export_selected=True)
         # bpy.ops.object.delete()
 
 

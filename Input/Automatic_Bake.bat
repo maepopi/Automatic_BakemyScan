@@ -25,7 +25,7 @@ set colorPath=..\Input\%name%\%name%.jpg
 
 set target=5000
 
-set method=MESHLAB
+set method=DECIMATE
 
 set resolution=1024
 
