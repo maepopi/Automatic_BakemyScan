@@ -130,8 +130,8 @@ def run():
     # #--------------------------
     
 
-    diffuse_path=os.path.join(sys.argv[6])
-    normal_path=os.path.join(sys.argv[7])
+    diffuse_path=sys.argv[6]
+    normal_path=sys.argv[7]
 
         # # On récupère le dossier de l'objet importé
     # itemfolderpath= os.path.dirname(item_path)
