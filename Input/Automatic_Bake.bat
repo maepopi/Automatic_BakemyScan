@@ -8,20 +8,20 @@ set convertScriptPath= ..\Blender\2.79\scripts\addons\Object_Reexport.py
 
 for %%I in (%1) do set name=%%~nxI
 
-mkdir ..\Output\%name%
+mkdir %1\..\..\Output\%name%
 
 set inputFullPath=%1
 
 set outputFullPath=%1\..\..\Output\%name%
 
-set outFolder=..\Output\%name%
+set outFolder=%1\..\..\Output\%name%
 
-set inPath=..\Input\%name%\%name%.obj
+set inPath=%1\%name%.obj
 
-set outPath=..\Output\%name%\%name%.obj
+set outPath=%1\..\..\Output\%name%\%name%.obj
 
 REM for now let's assume there will only be a jpg for the texture, and that normals and AO will be baked anyway from the high poly model. So no need to precise _diffuse after the %name%
-set colorPath=..\Input\%name%\%name%.jpg
+set colorPath=%1\%name%.jpg
 
 set target=8000
 
@@ -36,7 +36,7 @@ set resolution=1024
 
 ren %outPath% %name%_Mesh.obj
 
-set newPath=..\Output\%name%\%name%_Mesh.obj
+set newPath=%1\..\..\Output\%name%\%name%_Mesh.obj
 
 
 ren %outFolder%\%name%_albedo.jpg %name%_diffuse_%resolution%.jpg
