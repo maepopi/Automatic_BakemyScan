@@ -23,7 +23,7 @@ set outPath=..\Output\%name%\%name%.obj
 REM for now let's assume there will only be a jpg for the texture, and that normals and AO will be baked anyway from the high poly model. So no need to precise _diffuse after the %name%
 set colorPath=..\Input\%name%\%name%.jpg
 
-set target=5000
+set target=8000
 
 set method=DECIMATE
 
