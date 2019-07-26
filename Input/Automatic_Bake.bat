@@ -4,6 +4,8 @@ set bakeScriptPath=..\Blender\2.79\scripts\addons\BakeMyScan\scripts\bakemyscan.
 
 set convertScriptPath= ..\Blender\2.79\scripts\addons\Object_Reexport.py
 
+set convertToTrisScriptPath=..\Blender\2.79\scripts\addons\convert_to_tris.py
+
 
 
 for %%I in (%1) do set name=%%~nxI
@@ -23,6 +25,7 @@ if exist "%inputFullPath%\%name%.gltf" goto:gltf
 if exist "%inputFullPath%\%name%.glb" goto:glb
 if exist "%inputFullPath%\%name%.stl" goto:stl
 if exist "%inputFullPath%\%name%.ply" goto:ply
+if exist "%inputFullPath%\%name%.3ds" goto:3ds
 
 
 :obj
@@ -47,6 +50,10 @@ goto:object_extension_done
 
 :ply
 set object_extension=ply
+goto:object_extension_done
+
+:3ds
+set object_extension=3ds
 goto:object_extension_done
 
 
@@ -89,6 +96,7 @@ set method=DECIMATE
 
 set resolution=1024
 
+%blenderPath% -b -P %convertToTrisScriptPath% -- %inPath% %object_extension%
 
 
 %blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %target% -R %resolution% -c %colorPath%

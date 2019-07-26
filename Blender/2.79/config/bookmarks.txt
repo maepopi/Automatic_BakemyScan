@@ -1,5 +1,7 @@
 [Bookmarks]
 [Recent]
+E:\MaelysJob\LOCAL_GIT_PROJECTS\AUTOMATIC_BAKEMYSCAN\Automatic_BakemyScan\Input\menshoe\
+E:\MaelysJob\LOCAL_GIT_PROJECTS\AUTOMATIC_BAKEMYSCAN\Automatic_BakemyScan\Tests\
 E:\MaelysJob\LOCAL_GIT_PROJECTS\AUTOMATIC_BAKEMYSCAN\Automatic_BakemyScan\Input\annibal\
 E:\MaelysJob\LOCAL_GIT_PROJECTS\AUTOMATIC_BAKEMYSCAN\Automatic_BakemyScan\Input\arria\
 E:\MaelysJob\LOCAL_GIT_PROJECTS\AUTOMATIC_BAKEMYSCAN\Automatic_BakemyScan\Output\annibal\Glb\
@@ -8,5 +10,3 @@ E:\MaelysJob\LOCAL_GIT_PROJECTS\AUTOMATIC_BAKEMYSCAN\Automatic_BakemyScan\MMGS\b
 E:\MaelysJob\LOCAL_GIT_PROJECTS\AUTOMATIC_BAKEMYSCAN\Automatic_BakemyScan\InstantMeshes\
 E:\MaelysJob\OneDrive\2.PRO\2017-20XX_OPUSCOPE\1.EVENTS_COMMUNICATION\2019_JNA\MAN_3D_JNA\buste-de-femme-voilee\textures\
 C:\Users\Maelys\Documents\
-E:\MaelysJob\LOCAL_GIT_PROJECTS\AUTOMATIC_BAKEMYSCAN\Automatic_BakemyScan\Temp\
-E:\MaelysJob\LOCAL_GIT_PROJECTS\AUTOMATIC_BAKEMYSCAN\Automatic_BakemyScan\Quadriflow\
