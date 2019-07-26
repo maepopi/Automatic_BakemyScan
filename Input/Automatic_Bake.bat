@@ -16,12 +16,72 @@ set outputFullPath=%1\..\..\Output\%name%
 
 set outFolder=%1\..\..\Output\%name%
 
-set inPath=%1\%name%.obj
+
+if exist "%inputFullPath%\%name%.obj" goto:obj
+if exist "%inputFullPath%\%name%.fbx" goto:fbx
+if exist "%inputFullPath%\%name%.gltf" goto:gltf
+if exist "%inputFullPath%\%name%.glb" goto:glb
+if exist "%inputFullPath%\%name%.stl" goto:stl
+if exist "%inputFullPath%\%name%.ply" goto:ply
+
+
+:obj
+set object_extension=obj
+goto:object_extension_done
+
+:fbx
+set object_extension=fbx
+goto:object_extension_done
+
+:gltf
+set object_extension=gltf
+goto:object_extension_done
+
+:glb
+set object_extension=glb
+goto:object_extension_done
+
+:stl
+set object_extension=stl
+goto:object_extension_done
+
+:ply
+set object_extension=ply
+goto:object_extension_done
+
+
+:object_extension_done
+echo object extension is %object_extension%
+
+
+if exist "%inputFullPath%\%name%.jpg" goto:jpg
+if exist "%inputFullPath%\%name%.jpeg" goto:jpeg
+if exist "%inputFullPath%\%name%.png" goto:png
+
+:jpg
+set image_extension=jpg
+goto:image_extension_done
+
+:jpeg
+set image_extension=jpeg
+goto:image_extension_done
+
+:png
+set image_extension=png
+goto:image_extension_done
+
+:image_extension_done
+echo image_extension is %image_extension%
+
+
+set inPath=%1\%name%.%object_extension%
+
 
 set outPath=%1\..\..\Output\%name%\%name%.obj
 
 REM for now let's assume there will only be a jpg for the texture, and that normals and AO will be baked anyway from the high poly model. So no need to precise _diffuse after the %name%
-set colorPath=%1\%name%.jpg
+
+set colorPath=%1\%name%.%image_extension%
 
 set target=8000
 
