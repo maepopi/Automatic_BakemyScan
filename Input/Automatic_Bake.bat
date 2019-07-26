@@ -16,7 +16,7 @@ set inputFullPath=%1
 
 set outputFullPath=%1\..\..\Output\%name%
 
-set outFolder=%1\..\..\Output\%name%
+
 
 
 if exist "%inputFullPath%\%name%.obj" goto:obj
@@ -81,46 +81,53 @@ goto:image_extension_done
 echo image_extension is %image_extension%
 
 
+REM BASIC VARIABLES
+
 set inPath=%1\%name%.%object_extension%
-
-
-set outPath=%1\..\..\Output\%name%\%name%.obj
-
-REM for now let's assume there will only be a jpg for the texture, and that normals and AO will be baked anyway from the high poly model. So no need to precise _diffuse after the %name%
-
 set colorPath=%1\%name%.%image_extension%
-
-set target=8000
-
 set method=DECIMATE
-
 set resolution=1024
+
+
+REM PREPARATION OF THE OBJECT PRIOR TO DECIMATION
 
 %blenderPath% -b -P %convertToTrisScriptPath% -- %inPath% %object_extension%
 
+REM VERY LOW POLY VERSION
+set verylowtarget=1500
+set target_indicator=verylow
 
-%blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %target% -R %resolution% -c %colorPath%
+mkdir %1\..\..\Output\%name%\%target_indicator%
+set outFolder=%1\..\..\Output\%name%\%target_indicator%
+
+set outPath=%1\..\..\Output\%name%\%target_indicator%\%name%.obj
 
 
-ren %outPath% %name%_Mesh.obj
 
-set newPath=%1\..\..\Output\%name%\%name%_Mesh.obj
+%blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %verylowtarget% -R %resolution% -c %colorPath%
 
 
-ren %outFolder%\%name%_albedo.jpg %name%_diffuse_%resolution%.jpg
-ren %outFolder%\%name%_normal.jpg %name%_normal_%resolution%.jpg
+ren %outPath% %name%_Mesh_%target_indicator%.obj
+
+set newPath=%1\..\..\Output\%name%\%target_indicator%\%name%_Mesh_%target_indicator%.obj
+
+
+ren %outFolder%\%name%_albedo.jpg %name%_diffuse_%resolution%_%target_indicator%.jpg
+ren %outFolder%\%name%_normal.jpg %name%_normal_%resolution%_%target_indicator%.jpg
 
 mkdir %outputFullPath%\Glb
 
-set diffusepath=%outputFullPath%\%name%_diffuse_%resolution%.jpg
-set normalpath=%outputFullPath%\%name%_normal_%resolution%.jpg
+set diffusepath=%outputFullPath%\%target_indicator%\%name%_diffuse_%resolution%_%target_indicator%.jpg
+set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%resolution%_%target_indicator%.jpg
 set exportpath=%outputFullPath%\Glb
-set exportname=%name%_Mesh_%target%
-
+set exportname=%name%_Mesh_%verylowtarget%
 
 
 
 %blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname%
+
+
+REM MEDIUM POLY VERSION
 
 
 echo The process is done ! You can close the console !
