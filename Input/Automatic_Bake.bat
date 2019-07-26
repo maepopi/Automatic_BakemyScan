@@ -128,7 +128,37 @@ set exportname=%name%_Mesh_%verylowtarget%
 
 
 REM MEDIUM POLY VERSION
+set lowtarget=3000
+set target_indicator=low
 
+mkdir %1\..\..\Output\%name%\%target_indicator%
+set outFolder=%1\..\..\Output\%name%\%target_indicator%
+
+set outPath=%1\..\..\Output\%name%\%target_indicator%\%name%.obj
+
+
+
+%blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %lowtarget% -R %resolution% -c %colorPath%
+
+
+ren %outPath% %name%_Mesh_%target_indicator%.obj
+
+set newPath=%1\..\..\Output\%name%\%target_indicator%\%name%_Mesh_%target_indicator%.obj
+
+
+ren %outFolder%\%name%_albedo.jpg %name%_diffuse_%resolution%_%target_indicator%.jpg
+ren %outFolder%\%name%_normal.jpg %name%_normal_%resolution%_%target_indicator%.jpg
+
+mkdir %outputFullPath%\Glb
+
+set diffusepath=%outputFullPath%\%target_indicator%\%name%_diffuse_%resolution%_%target_indicator%.jpg
+set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%resolution%_%target_indicator%.jpg
+set exportpath=%outputFullPath%\Glb
+set exportname=%name%_Mesh_%lowtarget%
+
+
+
+%blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname%
 
 echo The process is done ! You can close the console !
 
