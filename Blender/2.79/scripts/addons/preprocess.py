@@ -111,12 +111,18 @@ else:
         image = imageNode.image
         image_name = image.name
 
-    image_extension = ".png"
-    origin_path = os.path.join(sys.argv[5], image_name)
-    destination_path = os.path.join(sys.argv[9], sys.argv[10] + image_extension )
 
-    print("Origin path is  " + origin_path)
-    print("destination path is " + destination_path)
+    image.filepath_raw = os.path.join(sys.argv[9], sys.argv[10] + ".png")
+    image.file_format = "PNG"
 
-    shutil.copy(origin_path, destination_path)
+    image.save()
+
+    # image_extension = ".png"
+    # origin_path = image_export_filepath
+    # destination_path = os.path.join(sys.argv[9], sys.argv[10] + image_extension )
+    #
+    # print("Origin path is  " + origin_path)
+    # print("destination path is " + destination_path)
+    #
+    # shutil.copy(origin_path, destination_path)
 
