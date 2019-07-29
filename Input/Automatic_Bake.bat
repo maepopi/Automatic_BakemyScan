@@ -2,9 +2,9 @@ set blenderPath=..\Blender\blender.exe
 
 set bakeScriptPath=..\Blender\2.79\scripts\addons\BakeMyScan\scripts\bakemyscan.py
 
-set convertScriptPath= ..\Blender\2.79\scripts\addons\Object_Reexport.py
+set convertScriptPath=..\Blender\2.79\scripts\addons\Object_Reexport.py
 
-set convertToTrisScriptPath=..\Blender\2.79\scripts\addons\convert_to_tris.py
+set preProcessScriptPath=..\Blender\2.79\scripts\addons\preprocess.py
 
 
 
@@ -17,8 +17,6 @@ set inputFullPath=%1
 set outputFullPath=%1\..\..\Output\%name%
 
 
-
-
 if exist "%inputFullPath%\%name%.obj" goto:obj
 if exist "%inputFullPath%\%name%.fbx" goto:fbx
 if exist "%inputFullPath%\%name%.gltf" goto:gltf
@@ -26,6 +24,7 @@ if exist "%inputFullPath%\%name%.glb" goto:glb
 if exist "%inputFullPath%\%name%.stl" goto:stl
 if exist "%inputFullPath%\%name%.ply" goto:ply
 if exist "%inputFullPath%\%name%.3ds" goto:3ds
+if exist "%inputFullPath%\%name%.dae" goto:dae
 
 
 :obj
@@ -56,6 +55,10 @@ goto:object_extension_done
 set object_extension=3ds
 goto:object_extension_done
 
+:dae
+set object_extension=dae
+goto:object_extension_done
+
 
 :object_extension_done
 echo object extension is %object_extension%
@@ -83,17 +86,44 @@ echo image_extension is %image_extension%
 
 REM BASIC VARIABLES
 
-set inPath=%1\%name%.%object_extension%
-set colorPath=%1\%name%.%image_extension%
-set method=DECIMATE
-set resolution=1024
+set processInPath=%1\%name%.%object_extension%
 
 
 REM PREPARATION OF THE OBJECT PRIOR TO DECIMATION
+mkdir %1\Preprocess
 
-%blenderPath% -b -P %convertToTrisScriptPath% -- %inPath% %object_extension%
+set preprocess_output_path=%1\Preprocess
+
+%blenderPath% -b -P %preProcessScriptPath% -- %inputFullPath% %processInPath% %object_extension% %image_extension% %preprocess_output_path% %name%
+
+set object_extension=obj
+
+REM here we have to precise again which is the extension of the copied texture, since at the first check, if the object is gltf, then it can't find the texture and thus its extension.
+if exist "%1\Preprocess\%name%.jpg" goto:jpg_preprocess
+if exist "%1\Preprocess\%name%.jpeg" goto:jpeg_preprocess
+if exist "%1\Preprocess\%name%.png" goto:png_preprocess
+
+:jpg_preprocess
+set image_extension=jpg
+goto:image_extension_preprocess_done
+
+:jpeg_preprocess
+set image_extension=jpeg
+goto:image_extension_preprocess_done
+
+:png_preprocess
+set image_extension=png
+goto:image_extension_preprocess_done
+
+
+:image_extension_preprocess_done
+echo image_extension is %image_extension%
 
 REM VERY LOW POLY VERSION
+set inPath=%1\Preprocess\%name%_clean.%object_extension%
+set colorPath=%1\Preprocess\%name%.%image_extension%
+set method=DECIMATE
+set resolution=1024
 set verylowtarget=1500
 set target_indicator=verylow
 
@@ -101,7 +131,6 @@ mkdir %1\..\..\Output\%name%\%target_indicator%
 set outFolder=%1\..\..\Output\%name%\%target_indicator%
 
 set outPath=%1\..\..\Output\%name%\%target_indicator%\%name%.obj
-
 
 
 %blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %verylowtarget% -R %resolution% -c %colorPath%
@@ -130,6 +159,7 @@ echo very low poly exported, going to low
 
 
 REM LOW POLY VERSION
+set resolution=1024
 set lowtarget=3000
 set target_indicator=low
 
@@ -167,6 +197,7 @@ echo low poly exported, going to medium
 
 
 REM MEDIUM POLY VERSION
+set resolution=1024
 set mediumtarget=6000
 set target_indicator=medium
 
@@ -202,7 +233,8 @@ set exportname=%name%_Mesh_%mediumtarget%
 
 echo medium poly exported, going to high
 
-REM MEDIUM POLY VERSION
+REM HIGH POLY VERSION
+set resolution=2048
 set hightarget=10000
 set target_indicator=high
 
@@ -230,6 +262,41 @@ set diffusepath=%outputFullPath%\%target_indicator%\%name%_diffuse_%resolution%_
 set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%resolution%_%target_indicator%.jpg
 set exportpath=%outputFullPath%\Glb
 set exportname=%name%_Mesh_%hightarget%
+
+
+%blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname%
+
+echo medium poly exported, going to high
+
+REM VERY HIGH POLY VERSION
+set resolution=2048
+set veryhightarget=50000
+set target_indicator=veryhigh
+
+mkdir %1\..\..\Output\%name%\%target_indicator%
+set outFolder=%1\..\..\Output\%name%\%target_indicator%
+
+set outPath=%1\..\..\Output\%name%\%target_indicator%\%name%.obj
+
+
+
+%blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %veryhightarget% -R %resolution% -c %colorPath%
+
+
+ren %outPath% %name%_Mesh_%target_indicator%.obj
+
+set newPath=%1\..\..\Output\%name%\%target_indicator%\%name%_Mesh_%target_indicator%.obj
+
+
+ren %outFolder%\%name%_albedo.jpg %name%_diffuse_%resolution%_%target_indicator%.jpg
+ren %outFolder%\%name%_normal.jpg %name%_normal_%resolution%_%target_indicator%.jpg
+
+mkdir %outputFullPath%\Glb
+
+set diffusepath=%outputFullPath%\%target_indicator%\%name%_diffuse_%resolution%_%target_indicator%.jpg
+set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%resolution%_%target_indicator%.jpg
+set exportpath=%outputFullPath%\Glb
+set exportname=%name%_Mesh_%veryhightarget%
 
 
 %blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname%
