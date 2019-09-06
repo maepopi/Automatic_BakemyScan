@@ -30,7 +30,7 @@ for item_path in obj_list:
         bpy.ops.import_scene.gltf(filepath=candidate_object)
 
     elif obj_extension == "stl":
-        bpy.ops.import_scene.stl( filepath=candidate_object)
+        bpy.ops.import_mesh.stl( filepath=candidate_object)
 
     elif obj_extension == "ply":
         bpy.ops.import_scene.ply( filepath=candidate_object)
