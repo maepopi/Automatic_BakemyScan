@@ -1,3 +1,4 @@
+E:\MaelysJob\OneDrive\2.PRO\2017-20XX_OPUSCOPE\1.EVENTS_COMMUNICATION\2019_HALLOWEEN\possessed-undead\source\Sketchfab_2018_02_26_09_33_18.blend
 E:\MaelysJob\LOCAL_GIT_PROJECTS\AUTOMATIC_BAKEMYSCAN\Automatic_BakemyScan\Blender\2.79\scripts\addons\io_scene_gltf2\glTF2.blend
 C:\Users\Maelys\Downloads\Bureau_Reexport.blend
 E:\MaelysJob\OneDrive\2.PRO\2017-20XX_OPUSCOPE\1.EVENTS_COMMUNICATION\2019_JNA\MAN_3D_JNA\depas_amphikypellon_vase-gobelet\depas10.blend
@@ -7,4 +8,3 @@ E:\3D_GENERALIST_WORK\3D_production_backup\20180309_backup\production\01_Modelin
 E:\3D_GENERALIST_WORK\3D_production_backup\20190201_backup\production\01_Modeling\Nature-Plants\Plant\53_Tree\tree.blend
 C:\Users\Maelys\Downloads\shoes.blend
 E:\MaelysJob\OneDrive\2.PRO\2017-20XX_OPUSCOPE\2.PROTOTYPING\TUTORIALS\HighToLow\Blender2.79\scene.blend
-E:\MaelysJob\OneDrive\2.PRO\2017-20XX_OPUSCOPE\2.PROTOTYPING\EXPERIENCES\2019_NAUMACHIE\01_Blender\Helmet\2.78_retopo\2.80_helmet_retopo.blend
