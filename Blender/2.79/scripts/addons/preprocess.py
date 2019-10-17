@@ -12,14 +12,14 @@ def Run():
     bpy.context.scene.render.engine = 'CYCLES'
 
     # GETTING THE VARIABLES SENT BY BATCH
-    root_path = sys.argv[4]
-    object_path = sys.argv[5]
-    object_name = sys.argv[6]
-    object_extension = sys.argv[7]
-    image_extension = sys.argv[8]
-    output_path = sys.argv[9]
-    multitexture = sys.argv[10]
-    texture_path = sys.argv[11]
+    root_path = sys.argv[5]
+    object_path = sys.argv[6]
+    object_name = sys.argv[7]
+    object_extension = sys.argv[8]
+    image_extension = sys.argv[9]
+    output_path = sys.argv[10]
+    multitexture = sys.argv[11]
+    texture_path = sys.argv[12]
 
     # DECLARING PYTHON VARIABLES
     # Change this resolution for a higher value if you have a better computer. But the higher the longer the object will be to process.
@@ -29,7 +29,7 @@ def Run():
 
     # CHECK THE ARGUMENT LIST
     # Debug purposes, keep this commented otherwise
-    CheckArgs()
+    # CheckArgs()
 
 
     # IMPORT THE OBJECT
