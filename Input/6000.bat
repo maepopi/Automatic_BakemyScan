@@ -4,6 +4,8 @@ set bakeScriptPath=..\Blender\2.79\scripts\addons\BakeMyScan\scripts\bakemyscan.
 
 set convertScriptPath=..\Blender\2.79\scripts\addons\Object_Reexport.py
 
+set multipleTexturesScript=..\Blender\2.79\scripts\addons\multipleTextures.py
+
 set preProcessScriptPath=..\Blender\2.79\scripts\addons\preprocess.py
 
 
@@ -15,6 +17,9 @@ mkdir %1\..\..\Output\%name%
 set inputFullPath=%1
 
 set outputFullPath=%1\..\..\Output\%name%
+
+REM THIS FOLDER IS ONLY FOR MULTIPLE TEXTURES
+set txdir=%1\Color
 
 
 if exist "%inputFullPath%\%name%.obj" goto:obj
@@ -64,24 +69,44 @@ goto:object_extension_done
 echo object extension is %object_extension%
 
 
-if exist "%inputFullPath%\%name%.jpg" goto:jpg
-if exist "%inputFullPath%\%name%.jpeg" goto:jpeg
-if exist "%inputFullPath%\%name%.png" goto:png
+if exist "%inputFullPath%\%name%_color.jpg" goto:jpg
+if exist "%inputFullPath%\%name%_color.jpeg" goto:jpeg
+if exist "%inputFullPath%\%name%_color.png" goto:png
+
+if exist "%txdir%\" goto:multipletextures
+
 
 :jpg
 set image_extension=jpg
+set multitexture=No
+set texturepath=%inputFullPath%\%name%_color.jpg
 goto:image_extension_done
 
 :jpeg
 set image_extension=jpeg
+set multitexture=No
+set texturepath=%inputFullPath%\%name%_color.jpeg
 goto:image_extension_done
 
 :png
 set image_extension=png
+set multitexture=No
+set texturepath=%inputFullPath%\%name%_color.png
 goto:image_extension_done
+
+:multipletextures
+echo MULTIPLE TEEEEEEEEEEEXTURE
+set multitexture=Yes
+set image_extension=None
+set texturepath=%txdir%
+goto:done
 
 :image_extension_done
 echo image_extension is %image_extension%
+
+:done
+
+echo multitexture detected
 
 
 REM BASIC VARIABLES
@@ -94,14 +119,16 @@ mkdir %1\Preprocess
 
 set preprocess_output_path=%1\Preprocess
 
-%blenderPath% -b -P %preProcessScriptPath% -- %inputFullPath% %processInPath% %object_extension% %image_extension% %preprocess_output_path% %name%
+%blenderPath% -b -P %preProcessScriptPath% -- %inputFullPath% %processInPath% %name% %object_extension% %image_extension% %preprocess_output_path%  %multitexture% %texturepath%
+REM            1  2         3               4           5               6       7                 8            9                          10           11               12
+
 
 set object_extension=obj
 
 REM here we have to precise again which is the extension of the copied texture, since at the first check, if the object is gltf, then it can't find the texture and thus its extension.
-if exist "%1\Preprocess\%name%.jpg" goto:jpg_preprocess
-if exist "%1\Preprocess\%name%.jpeg" goto:jpeg_preprocess
-if exist "%1\Preprocess\%name%.png" goto:png_preprocess
+if exist "%1\Preprocess\%name%_color.jpg" goto:jpg_preprocess
+if exist "%1\Preprocess\%name%_color.jpeg" goto:jpeg_preprocess
+if exist "%1\Preprocess\%name%_color.png" goto:png_preprocess
 
 :jpg_preprocess
 set image_extension=jpg
@@ -121,9 +148,8 @@ echo image_extension is %image_extension%
 
 
 set inPath=%1\Preprocess\%name%_clean.%object_extension%
-set colorPath=%1\Preprocess\%name%.%image_extension%
+set colorPath=%1\Preprocess\%name%_color.%image_extension%
 set method=DECIMATE
-
 
 REM MEDIUM POLY VERSION
 set diffuse_resolution=2048
@@ -168,10 +194,8 @@ set exportname=%name%_Mesh_%mediumtarget%_%diffuse_resolution%-%normal_resolutio
 
 
 
-
-
-
-
 echo The process is done ! You can close the console !
 
 pause
+
+
