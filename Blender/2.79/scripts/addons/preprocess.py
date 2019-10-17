@@ -63,7 +63,7 @@ def Run():
         clean_object = MultiTextureProcess(model, object_name, object_extension, texture_path, output_path, scene, bake_resolution)
 
     else:
-        print("HEYYYY NO BAKING")
+        # print("HEYYYY NO BAKING")
         clean_object = SingleTextureProcess(model, object_name, object_extension, output_path, texture_path, scene, image_extension, root_path)
 
 
@@ -300,7 +300,7 @@ def Construct(name, texture_path, output_path):
     for file in os.listdir( texture_path ):
         fileList.append( file )
 
-    CheckList(fileList)
+    # CheckList(fileList)
 
     for file in fileList:
         if 'color' in file or 'Color' in file:

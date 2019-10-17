@@ -191,162 +191,205 @@ echo very low poly exported, going to low
 pause
 
 
-REM REM LOW POLY VERSION
-REM set diffuse_resolution=1024
-REM set normal_resolution=1024
-REM set lowtarget=3000
-REM set target_indicator=low
+REM LOW POLY VERSION
+set diffuse_resolution=1024
+set normal_resolution=1024
+set lowtarget=3000
+set target_indicator=low
 
-REM mkdir %1\..\..\Output\%name%\%target_indicator%
-REM set outFolder=%1\..\..\Output\%name%\%target_indicator%
+mkdir %1\..\..\Output\%name%\%target_indicator%
+set outFolder=%1\..\..\Output\%name%\%target_indicator%
 
-REM set outPath=%1\..\..\Output\%name%\%target_indicator%\%name%.obj
+set outPath=%1\..\..\Output\%name%\%target_indicator%\%name%.obj
 
 
 
-REM %blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %lowtarget% -R %diffuse_resolution% -c %colorPath%
+%blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %lowtarget% -R %diffuse_resolution% -c %colorPath%
 
 
-REM ren %outPath% %name%_Mesh_%target_indicator%.obj
+ren %outPath% %name%_Mesh_%target_indicator%.obj
 
-REM set newPath=%1\..\..\Output\%name%\%target_indicator%\%name%_Mesh_%target_indicator%.obj
+set newPath=%1\..\..\Output\%name%\%target_indicator%\%name%_Mesh_%target_indicator%.obj
 
 
-REM ren %outFolder%\%name%_albedo.jpg %name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
-REM ren %outFolder%\%name%_normal.jpg %name%_normal_%normal_resolution%_%target_indicator%.jpg
+ren %outFolder%\%name%_albedo.jpg %name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
+ren %outFolder%\%name%_normal.jpg %name%_normal_%normal_resolution%_%target_indicator%.jpg
 
-REM mkdir %outputFullPath%\Glb
+mkdir %outputFullPath%\Glb
 
-REM set diffusepath=%outputFullPath%\%target_indicator%\%name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
-REM set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%normal_resolution%_%target_indicator%.jpg
-REM set exportpath=%outputFullPath%\Glb
-REM set exportname=%name%_Mesh_%lowtarget%_%diffuse_resolution%-%normal_resolution%
+set diffusepath=%outputFullPath%\%target_indicator%\%name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
+set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%normal_resolution%_%target_indicator%.jpg
+set exportpath=%outputFullPath%\Glb
+set exportname=%name%_Mesh_%lowtarget%_%diffuse_resolution%-%normal_resolution%
 
 
-REM %blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
+%blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
 
 
-REM echo low poly exported, going to medium
+echo low poly exported, going to medium
 
 
 
-REM REM MEDIUM POLY VERSION
-REM set diffuse_resolution=2048
-REM set normal_resolution=1024
-REM set mediumtarget=6000
-REM set target_indicator=medium
+REM MEDIUM POLY VERSION
+set diffuse_resolution=2048
+set normal_resolution=1024
+set mediumtarget=6000
+set target_indicator=medium
 
-REM mkdir %1\..\..\Output\%name%\%target_indicator%
-REM set outFolder=%1\..\..\Output\%name%\%target_indicator%
+mkdir %1\..\..\Output\%name%\%target_indicator%
+set outFolder=%1\..\..\Output\%name%\%target_indicator%
 
-REM set outPath=%1\..\..\Output\%name%\%target_indicator%\%name%.obj
+set outPath=%1\..\..\Output\%name%\%target_indicator%\%name%.obj
 
 
 
-REM %blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %mediumtarget% -R %diffuse_resolution% -c %colorPath%
+%blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %mediumtarget% -R %diffuse_resolution% -c %colorPath%
 
 
-REM ren %outPath% %name%_Mesh_%target_indicator%.obj
+ren %outPath% %name%_Mesh_%target_indicator%.obj
 
-REM set newPath=%1\..\..\Output\%name%\%target_indicator%\%name%_Mesh_%target_indicator%.obj
+set newPath=%1\..\..\Output\%name%\%target_indicator%\%name%_Mesh_%target_indicator%.obj
 
 
-REM ren %outFolder%\%name%_albedo.jpg %name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
-REM ren %outFolder%\%name%_normal.jpg %name%_normal_%normal_resolution%_%target_indicator%.jpg
+ren %outFolder%\%name%_albedo.jpg %name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
+ren %outFolder%\%name%_normal.jpg %name%_normal_%normal_resolution%_%target_indicator%.jpg
 
-REM mkdir %outputFullPath%\Glb
+mkdir %outputFullPath%\Glb
 
-REM set diffusepath=%outputFullPath%\%target_indicator%\%name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
-REM set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%normal_resolution%_%target_indicator%.jpg
+set diffusepath=%outputFullPath%\%target_indicator%\%name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
+set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%normal_resolution%_%target_indicator%.jpg
 
 
-REM set ffmpegpath=%~dp0..\ffmpeg\bin\ffmpeg.exe
-REM "%ffmpegpath%" -y -i %normalpath% -vf scale=%normal_resolution%:%normal_resolution% %outputFullPath%\%target_indicator%\%name%_normal_%normal_resolution%_%target_indicator%.jpg
+set ffmpegpath=%~dp0..\ffmpeg\bin\ffmpeg.exe
+"%ffmpegpath%" -y -i %normalpath% -vf scale=%normal_resolution%:%normal_resolution% %outputFullPath%\%target_indicator%\%name%_normal_%normal_resolution%_%target_indicator%.jpg
 
-REM set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%normal_resolution%_%target_indicator%.jpg
+set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%normal_resolution%_%target_indicator%.jpg
 
 
-REM set exportpath=%outputFullPath%\Glb
-REM set exportname=%name%_Mesh_%mediumtarget%_%diffuse_resolution%-%normal_resolution%
+set exportpath=%outputFullPath%\Glb
+set exportname=%name%_Mesh_%mediumtarget%_%diffuse_resolution%-%normal_resolution%
 
-REM %blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
+%blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
 
 
 
-REM echo medium poly exported, going to high
+echo medium poly exported, going to high
 
-REM REM HIGH POLY VERSION
-REM set diffuse_resolution=2048
-REM set normal_resolution=2048
-REM set hightarget=10000
-REM set target_indicator=high
+REM HIGH POLY VERSION
+set diffuse_resolution=2048
+set normal_resolution=2048
+set hightarget=10000
+set target_indicator=high
 
-REM mkdir %1\..\..\Output\%name%\%target_indicator%
-REM set outFolder=%1\..\..\Output\%name%\%target_indicator%
+mkdir %1\..\..\Output\%name%\%target_indicator%
+set outFolder=%1\..\..\Output\%name%\%target_indicator%
 
-REM set outPath=%1\..\..\Output\%name%\%target_indicator%\%name%.obj
+set outPath=%1\..\..\Output\%name%\%target_indicator%\%name%.obj
 
 
 
-REM %blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %hightarget% -R %diffuse_resolution% -c %colorPath%
+%blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %hightarget% -R %diffuse_resolution% -c %colorPath%
 
 
-REM ren %outPath% %name%_Mesh_%target_indicator%.obj
+ren %outPath% %name%_Mesh_%target_indicator%.obj
 
-REM set newPath=%1\..\..\Output\%name%\%target_indicator%\%name%_Mesh_%target_indicator%.obj
+set newPath=%1\..\..\Output\%name%\%target_indicator%\%name%_Mesh_%target_indicator%.obj
 
 
-REM ren %outFolder%\%name%_albedo.jpg %name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
-REM ren %outFolder%\%name%_normal.jpg %name%_normal_%normal_resolution%_%target_indicator%.jpg
+ren %outFolder%\%name%_albedo.jpg %name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
+ren %outFolder%\%name%_normal.jpg %name%_normal_%normal_resolution%_%target_indicator%.jpg
 
-REM mkdir %outputFullPath%\Glb
+mkdir %outputFullPath%\Glb
 
-REM set diffusepath=%outputFullPath%\%target_indicator%\%name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
-REM set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%normal_resolution%_%target_indicator%.jpg
-REM set exportpath=%outputFullPath%\Glb
-REM set exportname=%name%_Mesh_%hightarget%_%diffuse_resolution%-%normal_resolution%
+set diffusepath=%outputFullPath%\%target_indicator%\%name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
+set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%normal_resolution%_%target_indicator%.jpg
+set exportpath=%outputFullPath%\Glb
+set exportname=%name%_Mesh_%hightarget%_%diffuse_resolution%-%normal_resolution%
 
 
-REM %blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
+%blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
 
-REM echo medium poly exported, going to high
+echo medium poly exported, going to high
 
-REM REM VERY HIGH POLY VERSION
-REM set diffuse_resolution=2048
-REM set normal_resolution=2048
-REM set veryhightarget=50000
-REM set target_indicator=veryhigh
+REM VERY HIGH POLY VERSION
+set diffuse_resolution=2048
+set normal_resolution=2048
+set veryhightarget=50000
+set target_indicator=veryhigh
 
-REM mkdir %1\..\..\Output\%name%\%target_indicator%
-REM set outFolder=%1\..\..\Output\%name%\%target_indicator%
+mkdir %1\..\..\Output\%name%\%target_indicator%
+set outFolder=%1\..\..\Output\%name%\%target_indicator%
 
-REM set outPath=%1\..\..\Output\%name%\%target_indicator%\%name%.obj
+set outPath=%1\..\..\Output\%name%\%target_indicator%\%name%.obj
 
 
 
-REM %blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %veryhightarget% -R %diffuse_resolution% -c %colorPath%
+%blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %veryhightarget% -R %diffuse_resolution% -c %colorPath%
 
 
-REM ren %outPath% %name%_Mesh_%target_indicator%.obj
+ren %outPath% %name%_Mesh_%target_indicator%.obj
 
-REM set newPath=%1\..\..\Output\%name%\%target_indicator%\%name%_Mesh_%target_indicator%.obj
+set newPath=%1\..\..\Output\%name%\%target_indicator%\%name%_Mesh_%target_indicator%.obj
 
 
-REM ren %outFolder%\%name%_albedo.jpg %name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
-REM ren %outFolder%\%name%_normal.jpg %name%_normal_%normal_resolution%_%target_indicator%.jpg
+ren %outFolder%\%name%_albedo.jpg %name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
+ren %outFolder%\%name%_normal.jpg %name%_normal_%normal_resolution%_%target_indicator%.jpg
 
-REM mkdir %outputFullPath%\Glb
+mkdir %outputFullPath%\Glb
 
-REM set diffusepath=%outputFullPath%\%target_indicator%\%name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
-REM set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%normal_resolution%_%target_indicator%.jpg
-REM set exportpath=%outputFullPath%\Glb
-REM set exportname=%name%_Mesh_%veryhightarget%_%diffuse_resolution%-%normal_resolution%
+set diffusepath=%outputFullPath%\%target_indicator%\%name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
+set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%normal_resolution%_%target_indicator%.jpg
+set exportpath=%outputFullPath%\Glb
+set exportname=%name%_Mesh_%veryhightarget%_%diffuse_resolution%-%normal_resolution%
 
 
-REM %blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
+%blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
 
 
+echo very high poly exported, going to ultra high
 
-REM echo The process is done ! You can close the console !
 
-REM pause
+REM ULTRA HIGH POLY VERSION
+set diffuse_resolution=2048
+set normal_resolution=2048
+set ultrahightarget=120000
+set target_indicator=ultrahigh
+
+mkdir %1\..\..\Output\%name%\%target_indicator%
+set outFolder=%1\..\..\Output\%name%\%target_indicator%
+
+set outPath=%1\..\..\Output\%name%\%target_indicator%\%name%.obj
+
+
+
+%blenderPath% -b -P %bakeScriptPath% -- %inPath% %outPath% -M %method% -X %ultrahightarget% -R %diffuse_resolution% -c %colorPath%
+
+
+ren %outPath% %name%_Mesh_%target_indicator%.obj
+
+set newPath=%1\..\..\Output\%name%\%target_indicator%\%name%_Mesh_%target_indicator%.obj
+
+
+ren %outFolder%\%name%_albedo.jpg %name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
+ren %outFolder%\%name%_normal.jpg %name%_normal_%normal_resolution%_%target_indicator%.jpg
+
+mkdir %outputFullPath%\Glb
+
+set diffusepath=%outputFullPath%\%target_indicator%\%name%_diffuse_%diffuse_resolution%_%target_indicator%.jpg
+set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%normal_resolution%_%target_indicator%.jpg
+set exportpath=%outputFullPath%\Glb
+set exportname=%name%_Mesh_%ultrahightarget%_%diffuse_resolution%-%normal_resolution%
+
+
+%blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
+
+
+
+echo The process is done ! You can close the console !
+
+pause
+
+
+echo The process is done ! You can close the console !
+
+pause
