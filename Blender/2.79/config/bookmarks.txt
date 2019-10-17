@@ -1,7 +1,7 @@
 [Bookmarks]
 [Recent]
-E:\MaelysJob\LOCAL_GIT_PROJECTS\AUTOMATIC_BAKEMYSCAN\Automatic_BakemyScan\Input\Suzanne\Multitexture_Process\
 E:\MaelysJob\LOCAL_GIT_PROJECTS\AUTOMATIC_BAKEMYSCAN\Automatic_BakemyScan\Input\model\Multitexture_Process\
+E:\MaelysJob\LOCAL_GIT_PROJECTS\AUTOMATIC_BAKEMYSCAN\Automatic_BakemyScan\Input\Suzanne\Multitexture_Process\
 E:\MaelysJob\OneDrive\2.PRO\2017-20XX_OPUSCOPE\1.EVENTS_COMMUNICATION\2019_HALLOWEEN\possessed-undead\source\
 E:\MaelysJob\OneDrive\2.PRO\2017-20XX_OPUSCOPE\1.EVENTS_COMMUNICATION\2019_HALLOWEEN\possessed-undead\
 E:\MaelysJob\OneDrive\2.PRO\2017-20XX_OPUSCOPE\2.PROTOTYPING\EXPERIENCES\2019_DEMOSALES\TESTS\sofa-gltf\
