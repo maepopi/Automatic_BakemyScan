@@ -18,6 +18,9 @@ set inputFullPath=%1
 
 set outputFullPath=%1\..\..\Output\%name%
 
+REM THIS FOLDER IS ONLY FOR MULTIPLE TEXTURES
+set txdir=%1\Color
+
 
 if exist "%inputFullPath%\%name%.obj" goto:obj
 if exist "%inputFullPath%\%name%.fbx" goto:fbx
@@ -70,38 +73,41 @@ if exist "%inputFullPath%\%name%_color.jpg" goto:jpg
 if exist "%inputFullPath%\%name%_color.jpeg" goto:jpeg
 if exist "%inputFullPath%\%name%_color.png" goto:png
 
-if exist "%inputFullPath%\Color\" goto:multipletextures
+if exist "%txdir%\" goto:multipletextures
 
 
 :jpg
 set image_extension=jpg
-set multitexture=False
-set texturepath=None
+set multitexture=No
+set texturepath=%inputFullPath%\%name%_color.jpg
 goto:image_extension_done
 
 :jpeg
 set image_extension=jpeg
-set multitexture=False
-set texturepath=None
+set multitexture=No
+set texturepath=%inputFullPath%\%name%_color.jpeg
 goto:image_extension_done
 
 :png
 set image_extension=png
-set multitexture=False
-set texturepath=None
+set multitexture=No
+set texturepath=%inputFullPath%\%name%_color.png
 goto:image_extension_done
 
 :multipletextures
 echo MULTIPLE TEEEEEEEEEEEXTURE
-set multitexture=True
-set texturePath=%inputFullPath%\Color
+set multitexture=Yes
+set image_extension=None
+set texturepath=%txdir%
 goto:done
 
 :image_extension_done
 echo image_extension is %image_extension%
 
 :done
+
 echo multitexture detected
+
 
 REM BASIC VARIABLES
 
