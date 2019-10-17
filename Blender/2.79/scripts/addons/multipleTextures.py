@@ -269,8 +269,6 @@ def Bake(highpoly, lowpoly, output_path, baked_color):
 
 
 def Export(lowpoly, output_path, obj_name):
-    bpy.ops.object.select_all( action='DESELECT' )
-    bpy.data.objects[lowpoly.name].select = True
     bpy.context.scene.objects.active = lowpoly
     export_filepath = os.path.join(output_path, obj_name + "_multiprocessed" + ".obj" )
     bpy.ops.export_scene.obj(filepath=export_filepath, use_selection=True)
