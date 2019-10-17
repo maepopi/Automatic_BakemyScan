@@ -70,7 +70,9 @@ if exist "%inputFullPath%\%name%_color.jpg" goto:jpg
 if exist "%inputFullPath%\%name%_color.jpeg" goto:jpeg
 if exist "%inputFullPath%\%name%_color.png" goto:png
 
-if exist "%inputFullPath%\Color" goto:multipletextures
+if exist "%inputFullPath%\%name%_color0.jpg" goto:multipletextures
+if exist "%inputFullPath%\%name%_color0.png" goto:multipletextures
+if exist "%inputFullPath%\%name%_color0.jpeg" goto:multipletextures
 
 
 :jpg
@@ -86,7 +88,7 @@ set image_extension=png
 goto:image_extension_done
 
 :multipletextures
-set texturePath=%inputFullPath%\Color
+set texturePath=%inputFullPath%
 set objectPath=%inputFullPath%\%name%.%object_extension%
 mkdir %1\Multitexture_Process
 set multitextures_process_output_path=%1\Multitexture_Process
