@@ -1,128 +1,88 @@
 import bpy
+import sys
 import bmesh
 import os
-import sys
-import argparse
+import bmesh
+from os import listdir
 import shutil
 
-bpy.context.scene.render.engine = "CYCLES"
+
+def Run():
+    scene = bpy.context.scene
+    bpy.context.scene.render.engine = 'CYCLES'
+
+    # GETTING THE VARIABLES SENT BY BATCH
+    root_path = sys.argv[4]
+    object_path = sys.argv[5]
+    object_name = sys.argv[6]
+    object_extension = sys.argv[7]
+    image_extension = sys.argv[8]
+    output_path = sys.argv[9]
+    hasMultiTexture = sys.argv[10]
+    texture_path = sys.argv[11]
+
+    # DECLARING PYTHON VARIABLES
+    # Change this resolution for a higher value if you have a better computer. But the higher the longer the object will be to process.
+    bake_resolution = 2048
+
+    # CHECK THE ARGUMENT LIST
+    # Debug purposes, keep this commented otherwise
+    CheckArgs()
 
 
-rootfolder=os.path.join(sys.argv[5])
-obj_path=os.path.join(sys.argv[6])
-obj_extension=sys.argv[7]
-image_extension=sys.argv[8]
+    # IMPORT THE OBJECT
+    model = Import(object_path, object_extension, object_name, scene)
 
 
-obj_list=[]
-obj_list.append(obj_path)
 
-for item_path in obj_list:
-    candidate_object=item_path
 
-    if obj_extension=="obj":
+def CheckArgs():
+    print('HEYYYYYYYYYYYYYYYYYYYYYYYYYY')
+    print('root_path is ' + sys.argv[4])
+    print('object_path is ' + sys.argv[5])
+    print('object_name is ' + sys.argv[6])
+    print('object extension is ' + sys.argv[7])
+    print('image_extension is ' + sys.argv[8])
+    print('output_path is ' + sys.argv[9])
+    print('hasMultiTexture is ' + sys.argv[10])
+    print('texture_path is ' + sys.argv[11])
+
+
+def Import(path, object_extension, name, scene):
+    candidate_object = path
+    model = None
+
+    if object_extension == 'obj':
         bpy.ops.import_scene.obj(filepath=candidate_object)
 
-    elif obj_extension=="fbx":
-        bpy.ops.import_scene.fbx( filepath=candidate_object)
+    elif object_extension == 'fbx':
+        bpy.ops.import_scene.fbx(filepath=candidate_object)
 
-    elif obj_extension == "gltf" or obj_extension == "glb":
+    elif object_extension == 'gltf' or object_extension == 'glb':
         bpy.ops.import_scene.gltf(filepath=candidate_object)
 
-    elif obj_extension == "stl":
-        bpy.ops.import_mesh.stl( filepath=candidate_object)
+    elif object_extension == 'stl':
+        bpy.ops.import_mesh.stl(filepath=candidate_object)
 
-    elif obj_extension == "ply":
-        bpy.ops.import_scene.ply( filepath=candidate_object)
+    elif object_extension == 'ply':
+        bpy.ops.import_scene.ply(filepath=candidate_object)
 
-    elif obj_extension == "3ds":
-        bpy.ops.import_scene.autodesk_3ds( filepath=candidate_object)
-        
-    elif obj_extension == "dae":
-        bpy.ops.wm.collada_import( filepath=candidate_object)
+    elif object_extension == '3ds':
+        bpy.ops.import_scene.autodesk_3ds(filepath=candidate_object)
 
-#### TRIANGULATION #######
-ma_scene = bpy.context.scene
-for un_objet in ma_scene.objects:
-    if un_objet.type == 'MESH':
-        #je dit à chaque objet mesh que je rencontre (donc normalement un seul) d'être actif
-        bpy.context.scene.objects.active = un_objet
+    elif object_extension == 'dae':
+        bpy.ops.wm.collada_import(filepath=candidate_object)
 
-        #je fous dans une variable ce qui doit normalementetre mon seul objet actif
-curr_object = bpy.context.active_object
+    for object in scene.objects:
+        if object.type == 'MESH' and object.name != 'RootNode':
+            model = bpy.data.objects[object.name]
 
-object = curr_object.data
-bm=bmesh.new()
-bm.from_mesh(object)
+    # Select and make object active
+    bpy.data.objects[model.name].select = True
+    bpy.context.scene.objects.active = bpy.data.objects[model.name]
 
-bmesh.ops.triangulate(bm, faces=bm.faces[:],quad_method=0,ngon_method=0)
-bm.to_mesh(object)
-bm.free()
-
-export_filepath=os.path.join(sys.argv[9],sys.argv[10] + "_clean" + ".obj")
-
-bpy.ops.export_scene.obj(filepath=export_filepath, use_selection=True)
-
-
-#### DUPLICATE AND EXPORT TEXTURES ###
-image_path = "None"
-destination_path = "None"
-
-if obj_extension != "gltf":
-    if image_extension == "jpg":
-        image_path = os.path.join(sys.argv[5], sys.argv[10] + ".jpg")
-        destination_path = os.path.join( sys.argv[9], sys.argv[10] + ".jpg" )
-
-    elif image_extension == "jpeg":
-        image_path = os.path.join( sys.argv[5], sys.argv[10] + ".jpeg")
-        destination_path = os.path.join( sys.argv[9], sys.argv[10] + ".jpeg" )
-
-    elif image_extension == "png":
-        image_path = os.path.join( sys.argv[5], sys.argv[10] + ".png")
-        destination_path = os.path.join( sys.argv[9], sys.argv[10] + ".png" )
+    return model
 
 
 
-    origin_path = image_path
-    shutil.copy(origin_path, destination_path)
-
-
-else:
-    material = curr_object.data.materials[0]
-
-    material.use_nodes = True
-    tree = material.node_tree
-    nodes = tree.nodes
-    links = tree.links
-
-    DiffuseNode = nodes.get("Principled BSDF")
-    image_name = None
-
-    if DiffuseNode is None:
-        DiffuseNode = nodes.get("Diffuse BSDF")
-
-    socket = DiffuseNode.inputs[0]
-
-    link = next(link for link in links if link.to_node == DiffuseNode and link.to_socket == socket)
-
-    imageNode = link.from_node
-
-    if imageNode.type == 'TEX_IMAGE':
-        image = imageNode.image
-        image_name = image.name
-
-
-    image.filepath_raw = os.path.join(sys.argv[9], sys.argv[10] + ".png")
-    image.file_format = "PNG"
-
-    image.save()
-
-    # image_extension = ".png"
-    # origin_path = image_export_filepath
-    # destination_path = os.path.join(sys.argv[9], sys.argv[10] + image_extension )
-    #
-    # print("Origin path is  " + origin_path)
-    # print("destination path is " + destination_path)
-    #
-    # shutil.copy(origin_path, destination_path)
-
+Run()
