@@ -278,9 +278,10 @@ def MultiTextureProcess(highpoly, name, object_extension, texture_path, output_p
     CleanGeometry(lowpoly)
 
     # UNWRAP
-    print('----------------------------------------------------------------------------------------------------------')
+    print('----------------------------------------------------------------------------------------------')
     print('BE PATIENT, WE ARE UNWRAPPING YOUR MODEL, IT MIGHT TAKE SOME TIME!')
-    print('-----------------------------------------------------------------------------------------------------------')
+    print('Time for a cat video!')
+    print('----------------------------------------------------------------------------------------------')
     Unwrap(lowpoly)
 
     # CREATE IMAGE WHICH WILL RECEIVE THE BAKE
@@ -293,7 +294,9 @@ def MultiTextureProcess(highpoly, name, object_extension, texture_path, output_p
     cage = CreateCage(lowpoly, highpoly, scene)
 
     # CONFIGURE THE BAKING CAGE
-    cage = ConfigureCage(cage, scene, 0.010)
+    # This value should not be over 0.03
+    ratio = 0.010
+    cage = ConfigureCage(cage, scene, ratio)
 
     # BAKE
     Bake(highpoly, lowpoly, output_path, baked_color, cage)
@@ -487,9 +490,10 @@ def Bake(highpoly, lowpoly, output_path, baked_color, cage):
     bpy.data.objects[lowpoly.name].select = True
     bpy.context.scene.objects.active = lowpoly
 
-    print('----------------------------------------------------------------------------------------------------------' )
-    print('BE PATIENT, WE ARE BAKING YOUR MODEL, IT MIGHT TAKE SOME TIME!' )
-    print('-----------------------------------------------------------------------------------------------------------')
+    print('----------------------------------------------------------------------------------------------')
+    print('BE PATIENT, WE ARE BAKING YOUR MODEL, IT MIGHT TAKE SOME TIME!')
+    print('Time for another cat video!')
+    print('----------------------------------------------------------------------------------------------')
     bpy.ops.object.bake( type='DIFFUSE', pass_filter={'COLOR'}, filepath=filepath, use_selected_to_active=True, use_cage=True, cage_object=cage.name)
 
     image.filepath_raw = os.path.join(output_path, baked_color.name + '.png' )
