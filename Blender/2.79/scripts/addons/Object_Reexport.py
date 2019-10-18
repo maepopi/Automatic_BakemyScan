@@ -26,6 +26,9 @@ def run():
     diffuse_resolution = sys.argv[10]
     normal_resolution = sys.argv[11]
 
+    specular_value = 0.05
+    roughness_value = 1.0
+
     print(rootfolder)
 
     obj_list=[]
@@ -106,7 +109,13 @@ def run():
     nodes.remove( node )
 
     # Making the link between Principled Shader and Output
-    links.new( BSDF.outputs[0], Output.inputs[0] )
+    links.new( BSDF.outputs[0], Output.inputs[0])
+
+    # By default, we will consider the specular to be null in order to avoid the object to look like plastic. But in the future we ought to think about a condition that could somehow detect whether the object is supposed to be shiny or not.
+    BSDF.inputs[5].default_value = specular_value
+
+    # Same for roughness
+    BSDF.inputs[7].default_value = roughness_value
 
     # Applying the material to the object
     curr_object.data.materials[0] = mat
