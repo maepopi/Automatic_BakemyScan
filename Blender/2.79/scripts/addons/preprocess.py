@@ -278,6 +278,9 @@ def MultiTextureProcess(highpoly, name, object_extension, texture_path, output_p
     CleanGeometry(lowpoly)
 
     # UNWRAP
+    print('----------------------------------------------------------------------------------------------------------')
+    print('BE PATIENT, WE ARE UNWRAPPING YOUR MODEL, IT MIGHT TAKE SOME TIME!')
+    print('-----------------------------------------------------------------------------------------------------------')
     Unwrap(lowpoly)
 
     # CREATE IMAGE WHICH WILL RECEIVE THE BAKE
@@ -286,12 +289,43 @@ def MultiTextureProcess(highpoly, name, object_extension, texture_path, output_p
     # CREATE MATERIAL FOR THE LOW POLY
     CreateMaterial(lowpoly, highpoly, baked_color)
 
+    # CREATE THE BAKING CAGE
+    cage = CreateCage(lowpoly, highpoly, scene)
+
+    # CONFIGURE THE BAKING CAGE
+    cage = ConfigureCage(cage, scene, 0.010)
+
     # BAKE
-    Bake(highpoly, lowpoly, output_path, baked_color)
+    Bake(highpoly, lowpoly, output_path, baked_color, cage)
 
     clean_object = lowpoly
 
     return clean_object
+
+def ConfigureCage(cage, scene, ratio):
+    SelectActive( cage )
+    bpy.ops.object.editmode_toggle()
+    bpy.ops.mesh.select_all( action='SELECT' )
+    bpy.ops.transform.shrink_fatten( value=ratio, use_even_offset=False, mirror=False, proportional='DISABLED',proportional_edit_falloff='SMOOTH', proportional_size=1 )
+    bpy.ops.object.editmode_toggle()
+    return cage
+
+
+def CreateCage(lowpoly, highpoly, scene):
+    SelectActive( lowpoly )
+    bpy.ops.object.duplicate( linked=False, mode='TRANSLATION' )
+    cage = None
+
+    for ob in scene.objects:
+        if ob.type == 'MESH' and ob.name != lowpoly.name and ob.name != highpoly.name and ob.name != "RootNode":
+            cage = bpy.data.objects[ob.name]
+
+    bpy.data.objects[cage.name].select = True
+    bpy.context.scene.objects.active = bpy.data.objects[cage.name]
+
+    return cage
+
+
 
 def Construct(name, texture_path, output_path):
     fileList = []
@@ -445,7 +479,7 @@ def CreateMaterial(lowpoly, highpoly, baked_color):
     lowpoly.data.materials.append(mat)
 
 
-def Bake(highpoly, lowpoly, output_path, baked_color):
+def Bake(highpoly, lowpoly, output_path, baked_color, cage):
     image = baked_color
     filepath = output_path
     bpy.ops.object.select_all( action='DESELECT' )
@@ -453,7 +487,10 @@ def Bake(highpoly, lowpoly, output_path, baked_color):
     bpy.data.objects[lowpoly.name].select = True
     bpy.context.scene.objects.active = lowpoly
 
-    bpy.ops.object.bake( type='DIFFUSE', pass_filter={'COLOR'}, filepath=filepath, use_selected_to_active=True, cage_extrusion=0.3)
+    print('----------------------------------------------------------------------------------------------------------' )
+    print('BE PATIENT, WE ARE BAKING YOUR MODEL, IT MIGHT TAKE SOME TIME!' )
+    print('-----------------------------------------------------------------------------------------------------------')
+    bpy.ops.object.bake( type='DIFFUSE', pass_filter={'COLOR'}, filepath=filepath, use_selected_to_active=True, use_cage=True, cage_object=cage.name)
 
     image.filepath_raw = os.path.join(output_path, baked_color.name + '.png' )
     image.file_format = 'PNG'
