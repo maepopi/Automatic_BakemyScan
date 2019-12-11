@@ -119,7 +119,7 @@ mkdir %1\Preprocess
 
 set preprocess_output_path=%1\Preprocess
 
-%blenderPath% -b -P %preProcessScriptPath% -- -ifp %inputFullPath% -pip %processInPath% -n %name% -oe %object_extension% -ie %image_extension% -pop %preprocess_output_path%  -mt %multitexture% -tp %texturepath%
+%blenderPath% -b -P %preProcessScriptPath% -- %inputFullPath% %processInPath% %name% %object_extension% %image_extension% %preprocess_output_path%  %multitexture% %texturepath%
 REM            1  2         3               4           5               6       7                 8            9                          10           11               12
 
 
@@ -150,7 +150,6 @@ echo image_extension is %image_extension%
 set inPath=%1\Preprocess\%name%_clean.%object_extension%
 set colorPath=%1\Preprocess\%name%_color.%image_extension%
 set method=DECIMATE
-
 
 
 REM HIGH POLY VERSION
@@ -185,11 +184,10 @@ set exportpath=%outputFullPath%\Glb
 set exportname=%name%_Mesh_%hightarget%_%diffuse_resolution%-%normal_resolution%
 
 
-%blenderPath% -b -P %convertScriptPath% -- -np %newPath% -dp %diffusepath% -nop %normalpath% -ep %exportpath% -en %exportname% -dr %diffuse_resolution% -nr %normal_resolution%
-
-
+%blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
 
 echo The process is done ! You can close the console !
 
-pause
+pause 
+
 

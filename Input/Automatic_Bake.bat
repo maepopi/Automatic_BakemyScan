@@ -119,7 +119,7 @@ mkdir %1\Preprocess
 
 set preprocess_output_path=%1\Preprocess
 
-%blenderPath% -b -P %preProcessScriptPath% -- -ifp %inputFullPath% -pip %processInPath% -n %name% -oe %object_extension% -ie %image_extension% -pop %preprocess_output_path%  -mt %multitexture% -tp %texturepath%
+%blenderPath% -b -P %preProcessScriptPath% -- %inputFullPath% %processInPath% %name% %object_extension% %image_extension% %preprocess_output_path%  %multitexture% %texturepath%
 REM            1  2         3               4           5               6       7                 8            9                          10           11               12
 
 
@@ -184,11 +184,11 @@ set exportname=%name%_Mesh_%verylowtarget%_%diffuse_resolution%-%normal_resoluti
 
 
 
-%blenderPath% -b -P %convertScriptPath% -- -np %newPath% -dp %diffusepath% -nop %normalpath% -ep %exportpath% -en %exportname% -dr %diffuse_resolution% -nr %normal_resolution%
+%blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
 
 echo very low poly exported, going to low
 
-
+pause
 
 
 REM LOW POLY VERSION
@@ -223,7 +223,7 @@ set exportpath=%outputFullPath%\Glb
 set exportname=%name%_Mesh_%lowtarget%_%diffuse_resolution%-%normal_resolution%
 
 
-%blenderPath% -b -P %convertScriptPath% -- -np %newPath% -dp %diffusepath% -nop %normalpath% -ep %exportpath% -en %exportname% -dr %diffuse_resolution% -nr %normal_resolution%
+%blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
 
 
 echo low poly exported, going to medium
@@ -269,7 +269,7 @@ set normalpath=%outputFullPath%\%target_indicator%\%name%_normal_%normal_resolut
 set exportpath=%outputFullPath%\Glb
 set exportname=%name%_Mesh_%mediumtarget%_%diffuse_resolution%-%normal_resolution%
 
-%blenderPath% -b -P %convertScriptPath% -- -np %newPath% -dp %diffusepath% -nop %normalpath% -ep %exportpath% -en %exportname% -dr %diffuse_resolution% -nr %normal_resolution%
+%blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
 
 
 
@@ -307,7 +307,7 @@ set exportpath=%outputFullPath%\Glb
 set exportname=%name%_Mesh_%hightarget%_%diffuse_resolution%-%normal_resolution%
 
 
-%blenderPath% -b -P %convertScriptPath% -- -np %newPath% -dp %diffusepath% -nop %normalpath% -ep %exportpath% -en %exportname% -dr %diffuse_resolution% -nr %normal_resolution%
+%blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
 
 echo medium poly exported, going to high
 
@@ -343,7 +343,7 @@ set exportpath=%outputFullPath%\Glb
 set exportname=%name%_Mesh_%veryhightarget%_%diffuse_resolution%-%normal_resolution%
 
 
-%blenderPath% -b -P %convertScriptPath% -- -np %newPath% -dp %diffusepath% -nop %normalpath% -ep %exportpath% -en %exportname% -dr %diffuse_resolution% -nr %normal_resolution%
+%blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
 
 
 echo very high poly exported, going to ultra high
@@ -381,7 +381,7 @@ set exportpath=%outputFullPath%\Glb
 set exportname=%name%_Mesh_%ultrahightarget%_%diffuse_resolution%-%normal_resolution%
 
 
-%blenderPath% -b -P %convertScriptPath% -- -np %newPath% -dp %diffusepath% -nop %normalpath% -ep %exportpath% -en %exportname% -dr %diffuse_resolution% -nr %normal_resolution%
+%blenderPath% -b -P %convertScriptPath% -- %newPath% %diffusepath% %normalpath% %exportpath% %exportname% %diffuse_resolution% %normal_resolution%
 
 
 
@@ -389,3 +389,7 @@ echo The process is done ! You can close the console !
 
 pause
 
+
+echo The process is done ! You can close the console !
+
+pause

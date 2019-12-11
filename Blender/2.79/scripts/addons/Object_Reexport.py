@@ -18,28 +18,13 @@ def run():
     # put the location to the folder where the objs are located here in this fashion
     # this line will only work on windows ie C:\objects
     #Attention bien penser à changer l'index de l'argument selon sa place dans la ligne de commande
-
-    argv = sys.argv[sys.argv.index("--") + 1:]
-    parser = argparse.ArgumentParser()
-
-
-    parser.add_argument("-np", "--newPath", help="path of the object to convert")
-    parser.add_argument("-dp", "--diffusePath", help="path for the diffuse texture")
-    parser.add_argument("-nop", "--normalPath", help="path for the normal texture")
-    parser.add_argument("-ep", "--exportPath", help="path for the exported object")
-    parser.add_argument("-en", "--exportName", help="export name")
-    parser.add_argument("-dr", "--diffuseResolution", help="resolution of the diffuse texture")
-    parser.add_argument("-nr", "--normalResolution", help="resolution of the normal texture")
-
-    args = parser.parse_args(argv)
-
-    rootfolder= args.newPath
-    diffuse_path = args.diffusePath
-    normal_path = args.normalPath
-    export_path = args.exportPath
-    export_name = args.exportName
-    diffuse_resolution = args.diffuseResolution
-    normal_resolution = args.normalResolution
+    rootfolder= os.path.join(sys.argv[5])
+    diffuse_path = sys.argv[6]
+    normal_path = sys.argv[7]
+    export_path=sys.argv[8]
+    export_name=sys.argv[9]
+    diffuse_resolution = sys.argv[10]
+    normal_resolution = sys.argv[11]
 
     specular_value = 0.05
     roughness_value = 1.0

@@ -5,7 +5,6 @@ import os
 import bmesh
 from os import listdir
 import shutil
-import argparse
 
 
 def Run():
@@ -15,31 +14,14 @@ def Run():
 
 
     # GETTING THE VARIABLES SENT BY BATCH
-    argv = sys.argv[sys.argv.index("--") + 1:]
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("-ifp","--inputFullPath", help="Full path of the input object")
-    parser.add_argument("-pip","--processedInputPath", help="Path of the object once processed")
-    parser.add_argument("-n", "--name", help="Name of the object")
-    parser.add_argument("-oe","--objectExtension", help="Extension of the object")
-    parser.add_argument("-ie","--imageExtension", help="Extension of the texture")
-    parser.add_argument("-pop","--preprocessOutputPath", help="Preprocessed object output path")
-    parser.add_argument("-mt","--multitexture", help="Object has multitexture")
-    parser.add_argument("-tp","--texturePath", help="Path of the texture")
-
-    args = parser.parse_args(argv)
-
-
-
-
-    root_path = args.inputFullPath
-    object_path = args.processedInputPath
-    object_name = args.name
-    object_extension = args.objectExtension
-    image_extension = args.imageExtension
-    output_path = args.preprocessOutputPath
-    multitexture = args.multitexture
-    texture_path = args.texturePath
+    root_path = sys.argv[5]
+    object_path = sys.argv[6]
+    object_name = sys.argv[7]
+    object_extension = sys.argv[8]
+    image_extension = sys.argv[9]
+    output_path = sys.argv[10]
+    multitexture = sys.argv[11]
+    texture_path = sys.argv[12]
 
     # DECLARING PYTHON VARIABLES
     # Change this resolution for a higher value if you have a better computer. But the higher the longer the object will be to process.
