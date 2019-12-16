@@ -54,8 +54,9 @@ def Run():
     # IMPORT THE OBJECT
     models = []
     # Use extend here to add each argument of the list to the models list as an individual. If you use append and append a list to a list, the appeneded list will be appended as an object but with all the values together, not separated.
-    models.extend(Import(object_path, object_extension, object_name, scene)[0])
-    scene = Import(object_path, object_extension, object_name, scene)[1]
+    Import(object_path, object_extension, object_name)
+    scene = CheckMultiScene()
+    models.extend(GetModel(scene))
 
     # CheckList(models)
 
@@ -172,9 +173,9 @@ def CheckArgs():
     print('texture_path is ' + sys.argv[11])
 
 
-def Import(path, object_extension, name, scene):
+def Import(path, object_extension, name):
     candidate_object = path
-    models = []
+
 
     if object_extension == 'obj':
         bpy.ops.import_scene.obj(filepath=candidate_object)
@@ -197,7 +198,7 @@ def Import(path, object_extension, name, scene):
     elif object_extension == 'dae':
         bpy.ops.wm.collada_import(filepath=candidate_object)
 
-    # CHECK THAT THERE IS ONLY ONE SCENE
+def CheckMultiScene():
     list_scenes = bpy.data.scenes
     if len(list_scenes)>1:
         SetScene(list_scenes)
@@ -209,8 +210,12 @@ def Import(path, object_extension, name, scene):
     bpy.context.scene.render.engine = 'CYCLES'
     # print (scene.name)
 
+    return scene
+
+def GetModel(scene):
     # WE NEED TO SELECT ALL MESHES IF THEY ARE PLURAL
     all_objects = scene.objects
+    models = []
 
     if len(all_objects)>1:
         list_objects = []
@@ -233,7 +238,7 @@ def Import(path, object_extension, name, scene):
                 SelectActive(models)
 
 
-    return models, scene
+    return models
 
 def SelectActive(object):
     bpy.ops.object.select_all( action='DESELECT' )
