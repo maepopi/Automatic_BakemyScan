@@ -15,12 +15,20 @@ bpy.context.scene.render.engine = 'CYCLES'
 
 def Run():
 
+    args = DefineArguments()
+    # DEFINE THE OBJECTS AND TEXTURES TO BE IMPORTED
+    obj_list = []
+    obj_list.append(args.rootfolder)
+    model = Import(obj_list)
+    active_object = Select(model)
+    # Applying the material to the object
+    active_object.data.materials[0] = CreateMaterial(active_object, args.roughness_value, args.specular_value, args.diffuse_path, args.normal_path)
+    Export(active_object, args.export_path, args.export_name)
 
-# DEFINE ARGUMENTS
 
+class DefineArguments():
     argv = sys.argv[sys.argv.index("--") + 1:]
     parser = argparse.ArgumentParser()
-
 
     parser.add_argument("-np", "--newPath", help="path of the object to convert")
     parser.add_argument("-dp", "--diffusePath", help="path for the diffuse texture")
@@ -32,25 +40,17 @@ def Run():
 
     args = parser.parse_args(argv)
 
-    rootfolder= args.newPath
+    rootfolder = args.newPath
     diffuse_path = args.diffusePath
     normal_path = args.normalPath
     export_path = args.exportPath
     export_name = args.exportName
     diffuse_resolution = args.diffuseResolution
     normal_resolution = args.normalResolution
-
     specular_value = 0.05
     roughness_value = 1.0
 
-    # DEFINE THE OBJECTS AND TEXTURES TO BE IMPORTED
-    obj_list=[]
-    obj_list.append(rootfolder)
-    model = Import(obj_list)
-    active_object = Select(model)
-    # Applying the material to the object
-    active_object.data.materials[0] = CreateMaterial(active_object, roughness_value, specular_value, diffuse_path, normal_path)
-    Export(active_object, export_path, export_name)
+
 
 def Import(obj_list):
     model = None
@@ -60,14 +60,6 @@ def Import(obj_list):
 
     return model
     
-
-
-    #--------------------------
-    #
-    #     SELECTION
-    #
-    #--------------------------
-
 
 def Select(object):
     ma_scene = bpy.context.scene
