@@ -13,11 +13,10 @@ bpy.context.scene.render.engine = 'CYCLES'
 
 
 
-def run():
+def Run():
 
-    # put the location to the folder where the objs are located here in this fashion
-    # this line will only work on windows ie C:\objects
-    #Attention bien penser à changer l'index de l'argument selon sa place dans la ligne de commande
+
+# DEFINE ARGUMENTS
 
     argv = sys.argv[sys.argv.index("--") + 1:]
     parser = argparse.ArgumentParser()
@@ -44,41 +43,24 @@ def run():
     specular_value = 0.05
     roughness_value = 1.0
 
-    print(rootfolder)
-
+    # DEFINE THE OBJECTS AND TEXTURES TO BE IMPORTED
     obj_list=[]
-   
-
-    #-----------------------------------------
-    #
-    #     OBJECTS AND TEXTURES TO BE IMPORTED
-    #
-    #-------------------------------------------
-
-
-
     obj_list.append(rootfolder)
+    model = Import(obj_list)
+    active_object = Select(model)
+    # Applying the material to the object
+    active_object.data.materials[0] = CreateMaterial(active_object, roughness_value, specular_value, diffuse_path, normal_path)
+    Export(active_object, export_path, export_name)
 
-    print(obj_list)
-
-
-            
-
-    #--------------------------
-    #
-    #     IMPORT
-    #
-    #--------------------------
-
-
+def Import(obj_list):
+    model = None
     for item_path in obj_list:
-        #path de l'objet à importer
-        candidate_object= item_path 
-        #j'importe l'objet
+        candidate_object= item_path
         bpy.ops.import_scene.obj(filepath = candidate_object)
-        
+
+    return model
     
-    print(item_path)
+
 
     #--------------------------
     #
@@ -86,25 +68,19 @@ def run():
     #
     #--------------------------
 
-        #je selectionne l'objet importé
-        #je passemat. par toute la scène pour ne selectionner qu'un seul objet
 
+def Select(object):
     ma_scene = bpy.context.scene
     for un_objet in ma_scene.objects:
         if un_objet.type == 'MESH':
-        #je dit à chaque objet mesh que je rencontre (donc normalement un seul) d'être actif
-        	bpy.context.scene.objects.active = un_objet
+            bpy.context.scene.objects.active = un_objet
 
-        #je fous dans une variable ce qui doit normalementetre mon seul objet actif
     curr_object = bpy.context.active_object
 
-    #--------------------------
-    #
-    #     MATERIAL
-    #
-    #--------------------------
+    return curr_object
 
-        #Creation of the material we want on the object
+
+def CreateMaterial(object, roughness_value, specular_value, diffuse_path, normal_path):
     mat = bpy.data.materials.new( "coucou" )
     mat.use_nodes = True
 
@@ -132,79 +108,53 @@ def run():
     # Same for roughness
     BSDF.inputs[7].default_value = roughness_value
 
-    # Applying the material to the object
-    curr_object.data.materials[0] = mat
 
-      
-
-    # #--------------------------
-    # #
-    # #     IMPORT TEXTURES
-    # #
-    # #--------------------------
-    
-
-# #        #--------------------------
-# #        #
-# #        #     LINK TEXTURES
-# #        #
-# #        #--------------------------
-
-        #On charge les images dans Blender et on les met dans des nodes qu'on connecte au shader
+    # On charge les images dans Blender et on les met dans des nodes qu'on connecte au shader
     loaded_diffuse = bpy.data.images.load(diffuse_path)
     diff_texture_node = nodes.new("ShaderNodeTexImage")
     diff_texture_node.image = loaded_diffuse
     norm_texture_node = None
 
-        #On enlève l'extension au nom de la texture sinon il va exporter la texture avec deux fois .jpg
-    Diffuse_fullname=loaded_diffuse.name
-    Diffuse_splitname=os.path.splitext(Diffuse_fullname)
-    loaded_diffuse.name=Diffuse_splitname[0]
+    # On enlève l'extension au nom de la texture sinon il va exporter la texture avec deux fois .jpg
+    Diffuse_fullname = loaded_diffuse.name
+    Diffuse_splitname = os.path.splitext(Diffuse_fullname)
+    loaded_diffuse.name = Diffuse_splitname[0]
 
-
-    link_diffuse=links.new(diff_texture_node.outputs[0], BSDF.inputs[0])
+    link_diffuse = links.new(diff_texture_node.outputs[0], BSDF.inputs[0])
 
     if normal_path is not None:
         loaded_normal = bpy.data.images.load(normal_path)
         norm_texture_node = nodes.new("ShaderNodeTexImage")
         norm_texture_node.image = loaded_normal
-        norm_texture_node.color_space='NONE'
-            
-            #On enlève l'extension au nom de la texture sinon il va exporter la texture avec deux fois .jpg
-        Normal_fullname=loaded_normal.name
-        Normal_splitname=os.path.splitext(Normal_fullname)
-        loaded_normal.name=Normal_splitname[0]
-            
-        link_normal=links.new(norm_texture_node.outputs[0], BSDF.inputs[17])
-            
+        norm_texture_node.color_space = 'NONE'
 
+        # On enlève l'extension au nom de la texture sinon il va exporter la texture avec deux fois .jpg
+        Normal_fullname = loaded_normal.name
+        Normal_splitname = os.path.splitext(Normal_fullname)
+        loaded_normal.name = Normal_splitname[0]
+
+        link_normal = links.new(norm_texture_node.outputs[0], BSDF.inputs[17])
 
     # link_all= links.new(BSDF.outputs[0], nodes.get("Material Output").inputs[0])
 
 
-    # #--------------------------
-    # #
-    # #     EXPORT OBJECT
-    # #
-    # #--------------------------
-
-    #On détermine le dossier d'export, qu'il va falloir créer
-    export_folderpath= os.path.join(export_path)
+    return mat
 
 
-    #On détermine le chemin final et le nom d'export de l'objet
-    export_filepath = os.path.join(export_folderpath, export_name)
+def Export(object, export_path, export_name):
+    export_filepath = os.path.join(export_path, export_name)
 
+    # export_filepath = os.path.join(export_folderpath, export_name)
+    # print("HEYYY EXPORT FILE PATH IS " + export_folderpath)
 
-    #On exporte
-    # Note que dans les arguments on peut exporter en GLTF_SEPARATE, GLB ou GLTF_EMBEDDED
+    # # Note que dans les arguments on peut exporter en GLTF_SEPARATE, GLB ou GLTF_EMBEDDED
     bpy.ops.export_scene.gltf(filepath=export_filepath, export_format="GLB", export_selected=True)
-    # bpy.ops.object.delete()
+    # # bpy.ops.object.delete()
 
 
         
 
-run()
+Run()
 
 
 
