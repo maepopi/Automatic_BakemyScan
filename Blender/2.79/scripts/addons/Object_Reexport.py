@@ -22,7 +22,9 @@ def Run():
     model = Import(obj_list)
     active_object = Select(model)
     # Applying the material to the object
-    active_object.data.materials[0] = CreateMaterial(active_object, args.roughness_value, args.specular_value, args.diffuse_path, args.normal_path)
+    # I'm calling the class that will construct the material. See in the class for more comments
+    current_material = Material(active_object, args.roughness_value, args.specular_value, args.diffuse_path, args.normal_path)
+    active_object.data.materials[0] = current_material.mat
     Export(active_object, args.export_path, args.export_name)
 
 
@@ -72,65 +74,96 @@ def Select(object):
     return curr_object
 
 
-def CreateMaterial(object, roughness_value, specular_value, diffuse_path, normal_path):
-    mat = bpy.data.materials.new( "coucou" )
-    mat.use_nodes = True
+class Material():
+    # As in any other script, we need to define the variables that will be used in this class, even if they are not assigned to anything yet
+    Output = None
+    BSDF = None
+    mat = None
+    mat_object = None
+    mat_roughness_value = None
+    mat_specular_value = None
+    mat_diffuse_path = None
+    mat_normal_path = None
 
-    # Storing the variables of the tree node for them to be more accessible
-    tree = mat.node_tree
-    nodes = tree.nodes
-    links = tree.links
+    # The constructor enables to create an instance of the class with specific arguments that will be passed into the class. Basically if you want to pass arguments
+    # to your class, you need a constructor. The arguments of the class will be assigned to specific variables.
+    def __init__(self, object, roughness_value, specular_value, diffuse_path, normal_path):
+        # The word "self" refers to the object instantiated by the class. The operations of the class will be done on self. And as the self enters in the name of the variable, the variable
+        # will always have to be called by that name.
+        self.mat_object = object
+        self.mat_roughness_value = roughness_value
+        self.mat_specular_value = specular_value
+        self.mat_diffuse_path = diffuse_path
+        self.mat_normal_path = normal_path
 
-    # Creating the nodes I want
-    BSDF = nodes.new( "ShaderNodeBsdfPrincipled" )
-    Output = nodes.get( "Material Output" )
-    Diffuse = nodes.get( "Diffuse BSDF" )
-
-    # Removing the default diffuse bsdf
-    diffnodes = mat.node_tree.nodes
-    node = nodes["Diffuse BSDF"]
-    nodes.remove( node )
-
-    # Making the link between Principled Shader and Output
-    links.new( BSDF.outputs[0], Output.inputs[0])
-
-    # By default, we will consider the specular to be null in order to avoid the object to look like plastic. But in the future we ought to think about a condition that could somehow detect whether the object is supposed to be shiny or not.
-    BSDF.inputs[5].default_value = specular_value
-
-    # Same for roughness
-    BSDF.inputs[7].default_value = roughness_value
+        # You can already call the functions of the class inside the constructor, because the constructor initiates the object, so it can also be asked to modify it.
+        self.CreateMaterial()
+        self.LinkTextures()
 
 
-    # On charge les images dans Blender et on les met dans des nodes qu'on connecte au shader
-    loaded_diffuse = bpy.data.images.load(diffuse_path)
-    diff_texture_node = nodes.new("ShaderNodeTexImage")
-    diff_texture_node.image = loaded_diffuse
-    norm_texture_node = None
+    def CreateMaterial(self):
+        # You need to put "self" before the variables that you want to access in all the functions of the class. It's roughly like a global.
+        self.mat = bpy.data.materials.new( "FinalMaterial" )
+        self.mat.use_nodes = True
 
-    # On enlève l'extension au nom de la texture sinon il va exporter la texture avec deux fois .jpg
-    Diffuse_fullname = loaded_diffuse.name
-    Diffuse_splitname = os.path.splitext(Diffuse_fullname)
-    loaded_diffuse.name = Diffuse_splitname[0]
+        # Storing the variables of the tree node for them to be more accessible
+        self.tree = self.mat.node_tree
+        self.nodes = self.tree.nodes
+        self.links = self.tree.links
 
-    link_diffuse = links.new(diff_texture_node.outputs[0], BSDF.inputs[0])
+        # Creating the nodes I want
+        self.BSDF = self.nodes.new( "ShaderNodeBsdfPrincipled" )
+        self.Output = self.nodes.get( "Material Output" )
+        # Diffuse = nodes.get( "Diffuse BSDF" )
 
-    if normal_path is not None:
-        loaded_normal = bpy.data.images.load(normal_path)
-        norm_texture_node = nodes.new("ShaderNodeTexImage")
-        norm_texture_node.image = loaded_normal
-        norm_texture_node.color_space = 'NONE'
+        # Removing the default diffuse bsdf
+        # diffnodes = self.mat.node_tree.nodes
+        node = self.nodes["Diffuse BSDF"]
+        self.nodes.remove( node )
+
+        # Making the link between Principled Shader and Output
+        self.links.new( self.BSDF.outputs[0], self.Output.inputs[0])
+
+        # By default, we will consider the specular to be null in order to avoid the object to look like plastic. But in the future we ought to think about a condition that could somehow detect whether the object is supposed to be shiny or not.
+        self.BSDF.inputs[5].default_value = self.mat_specular_value
+
+        # Same for roughness
+        self.BSDF.inputs[7].default_value = self.mat_roughness_value
+
+
+
+
+    def LinkTextures(self):
+        # On charge les images dans Blender et on les met dans des nodes qu'on connecte au shader
+        loaded_diffuse = bpy.data.images.load(self.mat_diffuse_path)
+        diff_texture_node = self.nodes.new("ShaderNodeTexImage")
+        diff_texture_node.image = loaded_diffuse
+        norm_texture_node = None
 
         # On enlève l'extension au nom de la texture sinon il va exporter la texture avec deux fois .jpg
-        Normal_fullname = loaded_normal.name
-        Normal_splitname = os.path.splitext(Normal_fullname)
-        loaded_normal.name = Normal_splitname[0]
+        Diffuse_fullname = loaded_diffuse.name
+        Diffuse_splitname = os.path.splitext(Diffuse_fullname)
+        loaded_diffuse.name = Diffuse_splitname[0]
 
-        link_normal = links.new(norm_texture_node.outputs[0], BSDF.inputs[17])
+        link_diffuse = self.links.new(diff_texture_node.outputs[0], self.BSDF.inputs[0])
 
-    # link_all= links.new(BSDF.outputs[0], nodes.get("Material Output").inputs[0])
+        if self.mat_normal_path is not None:
+            loaded_normal = bpy.data.images.load(self.mat_normal_path)
+            norm_texture_node = self.nodes.new("ShaderNodeTexImage")
+            norm_texture_node.image = loaded_normal
+            norm_texture_node.color_space = 'NONE'
+
+            # On enlève l'extension au nom de la texture sinon il va exporter la texture avec deux fois .jpg
+            Normal_fullname = loaded_normal.name
+            Normal_splitname = os.path.splitext(Normal_fullname)
+            loaded_normal.name = Normal_splitname[0]
+
+            link_normal = self.links.new(norm_texture_node.outputs[0], self.BSDF.inputs[17])
+
+        # link_all= links.new(BSDF.outputs[0], nodes.get("Material Output").inputs[0])
 
 
-    return mat
+
 
 
 def Export(object, export_path, export_name):

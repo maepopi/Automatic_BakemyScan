@@ -119,7 +119,7 @@ mkdir %1\Preprocess
 
 set preprocess_output_path=%1\Preprocess
 
-%blenderPath% -P %preProcessScriptPath% -- -ifp %inputFullPath% -pip %processInPath% -n %name% -oe %object_extension% -ie %image_extension% -pop %preprocess_output_path%  -mt %multitexture% -tp %texturepath%
+%blenderPath% -b -P %preProcessScriptPath% -- -ifp %inputFullPath% -pip %processInPath% -n %name% -oe %object_extension% -ie %image_extension% -pop %preprocess_output_path%  -mt %multitexture% -tp %texturepath%
 REM            1  2         3               4           5               6       7                 8            9                          10           11               12
 
 
