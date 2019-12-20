@@ -15,6 +15,7 @@ bpy.context.scene.render.engine = 'CYCLES'
 
 def Run():
 
+    # GET THE BATCH ARGUMENTS
     args = DefineArguments()
     # DEFINE THE OBJECTS AND TEXTURES TO BE IMPORTED
     obj_list = []
@@ -29,28 +30,47 @@ def Run():
 
 
 class DefineArguments():
-    argv = sys.argv[sys.argv.index("--") + 1:]
-    parser = argparse.ArgumentParser()
+    rootfolder = None
+    diffuse_path = None
+    normal_path = None
+    export_path = None
+    export_name = None
+    diffuse_resolution = None
+    normal_resolution = None
+    specular_value = None
+    roughness_value = None
+    argv = None
+    parser = None
+    args = None
 
-    parser.add_argument("-np", "--newPath", help="path of the object to convert")
-    parser.add_argument("-dp", "--diffusePath", help="path for the diffuse texture")
-    parser.add_argument("-nop", "--normalPath", help="path for the normal texture")
-    parser.add_argument("-ep", "--exportPath", help="path for the exported object")
-    parser.add_argument("-en", "--exportName", help="export name")
-    parser.add_argument("-dr", "--diffuseResolution", help="resolution of the diffuse texture")
-    parser.add_argument("-nr", "--normalResolution", help="resolution of the normal texture")
+    def __init__(self):
+        self.GetBatchArgs()
 
-    args = parser.parse_args(argv)
+        # We need to put "self" before the variables, because we want the variables of the class, not new variables specific to the function
+        self.rootfolder = self.args.newPath
+        self.diffuse_path = self.args.diffusePath
+        self.normal_path = self.args.normalPath
+        self.export_path = self.args.exportPath
+        self.export_name = self.args.exportName
+        self.diffuse_resolution = self.args.diffuseResolution
+        self.normal_resolution = self.args.normalResolution
+        self.specular_value = 0.05
+        self.roughness_value = 1.0
 
-    rootfolder = args.newPath
-    diffuse_path = args.diffusePath
-    normal_path = args.normalPath
-    export_path = args.exportPath
-    export_name = args.exportName
-    diffuse_resolution = args.diffuseResolution
-    normal_resolution = args.normalResolution
-    specular_value = 0.05
-    roughness_value = 1.0
+    def GetBatchArgs(self):
+        argv = sys.argv[sys.argv.index("--") + 1:]
+        parser = argparse.ArgumentParser()
+
+        parser.add_argument("-np", "--newPath", help="path of the object to convert")
+        parser.add_argument("-dp", "--diffusePath", help="path for the diffuse texture")
+        parser.add_argument("-nop", "--normalPath", help="path for the normal texture")
+        parser.add_argument("-ep", "--exportPath", help="path for the exported object")
+        parser.add_argument("-en", "--exportName", help="export name")
+        parser.add_argument("-dr", "--diffuseResolution", help="resolution of the diffuse texture")
+        parser.add_argument("-nr", "--normalResolution", help="resolution of the normal texture")
+
+        self.args = parser.parse_args(argv)
+
 
 
 
@@ -162,19 +182,13 @@ class Material():
 
         # link_all= links.new(BSDF.outputs[0], nodes.get("Material Output").inputs[0])
 
-
-
-
-
 def Export(object, export_path, export_name):
     export_filepath = os.path.join(export_path, export_name)
 
-    # export_filepath = os.path.join(export_folderpath, export_name)
-    # print("HEYYY EXPORT FILE PATH IS " + export_folderpath)
 
-    # # Note que dans les arguments on peut exporter en GLTF_SEPARATE, GLB ou GLTF_EMBEDDED
+    # Note que dans les arguments on peut exporter en GLTF_SEPARATE, GLB ou GLTF_EMBEDDED
     bpy.ops.export_scene.gltf(filepath=export_filepath, export_format="GLB", export_selected=True)
-    # # bpy.ops.object.delete()
+    # bpy.ops.object.delete()
 
 
         
