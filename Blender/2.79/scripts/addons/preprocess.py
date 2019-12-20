@@ -11,31 +11,28 @@ import argparse
 def Run():
 
 
-    # scene = bpy.context.scene
-    # bpy.context.scene.render.engine = 'CYCLES'
+    scene = bpy.context.scene
+    bpy.context.scene.render.engine = 'CYCLES'
 
 
     # GETTING THE VARIABLES SENT BY BATCH
     args = DefineArguments()
 
-
-
     # DECLARING PYTHON VARIABLES
     # Change this resolution for a higher value if you have a better computer. But the higher the longer the object will be to process.
     bake_resolution = 2048
     has_multi_texture = None
-    clean_object = None
+    models = []
 
     # CHECK THE ARGUMENT LIST
     # Debug purposes, keep this commented otherwise
     # CheckArgs()
 
     # IMPORT THE OBJECT
-    models = []
     # Use extend here to add each argument of the list to the models list as an individual. If you use append and append a list to a list, the appeneded list will be appended as an object but with all the values together, not separated.
-    Import(object_path, object_extension, object_name)
-    scene = CheckMultiScene()
-    models.extend(GetModel(scene))
+    import_process = ImportToScene()
+    scene = import_process.import_to_scene_scene
+    models = import_process.import_to_scene_models
 
     # CheckList(models)
     # CheckObj(scene)
@@ -66,8 +63,8 @@ def Run():
         clean_object = MultiTextureProcess(single_model, object_name, object_extension, texture_path, output_path, scene, bake_resolution)
 
     else:
-
-        clean_object = SingleTextureProcess(single_model, object_name, object_extension, output_path, texture_path, scene, image_extension, root_path)
+        single_texture_process = SingleTextureProcess()
+        clean_object = single_texture_process.single_texture_clean_object
 
 
     Export(clean_object, object_name, output_path)
@@ -112,65 +109,58 @@ class DefineArguments():
 
             self.args = parser.parse_args(self.argv)
 
-# class SingleTextureProcess():
-#     single_texture_object = None
-#     single_texture_name = None
-#     single_texture_object_extension = None
-#     single_texture_output_path = None
-#     single_texture_texture_path = None
-#     single_texture_scene = None
-#     single_texture_image_extension = None
-#     single_texture_root_path = None
-#
-#     def __init__(self):
-#
+class SingleTextureProcess():
+    single_texture_object = None
+    single_texture_name = None
+    single_texture_object_extension = None
+    single_texture_output_path = None
+    single_texture_texture_path = None
+    single_texture_scene = None
+    single_texture_image_extension = None
+    single_texture_root_path = None
+    single_texture_clean_object = None
 
-def SetScene(list):
-    for i in range (len(list)):
-        scene = list[i]
-        for obj in scene.objects:
-            if obj.name != 'RootNode' and obj.type =='MESH':
-                bpy.context.window.screen.scene = bpy.data.scenes[scene.name]
+    def __init__(self):
+        self.single_texture_object = object
+        self.single_texture_name = name
+        self.single_texture_object_extension = object_extension
+        self.single_texture_output_path = output_path
+        self.single_texture_texture_path = texture_path
+        self.single_texture_scene = scene
+        self.single_texture_image_extension = image_extension
+        self.single_texture_root_path = rootpath
 
-def SingleTextureProcess(object, name, object_extension, output_path, texture_path, scene, image_extension, root_path):
-    CleanGeometry(object)
-    SaveTextures(object, name, object_extension, output_path, texture_path, scene, image_extension, root_path)
-    clean_object = object
+        self.CleanGeometry()
+        self.ProcessTextures()
 
-    return clean_object
+        self.single_texture_clean_object = self.single_texture_object
 
-def SaveTextures(object, name, object_extension, output_path, texture_path, scene, image_extension, root_path):
-    image_path = None
-    destination_path = None
+    def ProcessTextures(self):
+        image_path = None
+        destination_path = None
 
-    if object_extension != 'gltf' and object_extension != 'glb':
-        if image_extension == 'jpg':
-            image_path = os.path.join(root_path, name + '_color' + '.jpg')
-            destination_path = os.path.join(output_path, name + '_color' + '.jpg')
+        if self.single_texture_object_extension != 'gltf' and self.single_texture_object_extension != 'glb':
+            image_path = os.path.join(self.single_texture_root_path, name + '_color' + self.single_texture_image_extension)
+            destination_path = os.path.join(self.single_texture_output_path, self.single_texture_name + '_color' + self.single_texture_image_extension)
+            origin_path = image_path
+            # print('HEYYYYYY TEXTURE PATH IS ' + texture_path)
+            # print('HEYYYYYY ORIGIN PATH IS ' + origin_path)
+            # print('HEYYYYYY DESTINATION PATH IS ' + destination_path)
+            shutil.copy(origin_path, destination_path)
 
-        elif image_extension == 'jpeg':
-            image_path = os.path.join(root_path, name + '_color' + '.jpeg')
-            destination_path = os.path.join( output_path, name + '_color' + '.jpeg')
+        else:
+            self.SaveTextures()
 
-        elif image_extension == 'png':
-            image_path = os.path.join(root_path, name + '_color' + '.png')
-            destination_path = os.path.join(output_path, name + '_color' + '.png')
 
-        origin_path = image_path
-        # print('HEYYYYYY TEXTURE PATH IS ' + texture_path)
-        # print('HEYYYYYY ORIGIN PATH IS ' + origin_path)
-        # print('HEYYYYYY DESTINATION PATH IS ' + destination_path)
-        shutil.copy(origin_path, destination_path)
-
-    else:
-        material = object.data.materials[0]
+    def SaveTextures(self):
+        material = self.single_texture_object.data.materials[0]
         material.use_nodes = True
         tree = material.node_tree
         nodes = tree.nodes
         links = tree.links
-
         Diffuse_node = nodes.get('Principled BSDF')
         image_name = None
+        image = None
 
         if Diffuse_node is None:
             Diffuse_node = nodes.get('Diffuse BSDF')
@@ -185,10 +175,105 @@ def SaveTextures(object, name, object_extension, output_path, texture_path, scen
             image = image_node.image
             image_name = image.name
 
-
-        image.filepath_raw = os.path.join(output_path, name + '_color' + '.png')
+        image.filepath_raw = os.path.join(self.single_texture_output_path, self.single_texture_name + '_color' + '.png')
         image.file_format = 'PNG'
         image.save()
+
+class ImportToScene():
+    import_to_scene_object_path = None
+    import_to_scene_object_extension = None
+    import_to_scene_object_name = None
+    import_to_scene_scene = None
+    import_to_scene_models = []
+
+    def __init__(self):
+        self.import_to_scene_object_path = object_path
+        self.import_to_scene_object_extension = object_extension
+        self.import_to_scene_object_name = object_name
+        self.import_to_scene_scene = scene
+
+        self.Import()
+        self.CheckMultiScene()
+
+        self.import_to_scene_models.extend(self.GetModel())
+
+
+    def Import(self):
+        candidate_object = self.import_to_scene_object_path
+
+        if object_extension == 'obj':
+            bpy.ops.import_scene.obj(filepath=candidate_object)
+
+        elif object_extension == 'fbx':
+            bpy.ops.import_scene.fbx(filepath=candidate_object)
+
+        elif object_extension == 'gltf' or object_extension == 'glb':
+            bpy.ops.import_scene.gltf(filepath=candidate_object)
+
+        elif object_extension == 'stl':
+            bpy.ops.import_mesh.stl(filepath=candidate_object)
+
+        elif object_extension == 'ply':
+            bpy.ops.import_scene.ply(filepath=candidate_object)
+
+        elif object_extension == '3ds':
+            bpy.ops.import_scene.autodesk_3ds(filepath=candidate_object)
+
+        elif object_extension == 'dae':
+            bpy.ops.wm.collada_import(filepath=candidate_object)
+
+    def CheckMultiScene(self):
+        self.list_scenes = bpy.data.scenes
+        if len(list_scenes)>1:
+            SetScene()
+
+        else:
+            pass
+
+        self.import_to_scene_scene = bpy.context.scene
+        bpy.context.scene.render.engine = 'CYCLES'
+        # print (scene.name)
+
+    def SetScene(self):
+        list = self.list_scenes
+        for i in range(len(list)):
+            scene = list[i]
+            for obj in self.import_to_scene_scene.objects:
+                if obj.name != 'RootNode' and obj.type == 'MESH':
+                    bpy.context.window.screen.scene = bpy.data.scenes[self.import_to_scene_scene.name]
+
+    def GetModel(self):
+        # WE NEED TO SELECT ALL MESHES IF THEY ARE PLURAL
+        all_objects = self.import_to_scene_scene.objects
+
+        #We start by making a list of all the objects in the scene
+        if len(all_objects) > 1:
+            for object in self.import_to_scene_scene.objects:
+                # print(object.name)
+                if object.type == 'MESH' and 'RootNode' not in object.name:
+                    bpy.data.objects[object.name].select = True
+                    self.import_to_scene_models.append(object.name)
+
+            # CheckList(list_objects)
+
+
+        else:
+            for object in self.import_to_scene_scene.objects:
+                if object.type == 'MESH' and 'RootNode' not in object.name:
+                    self.import_to_scene_models.append(object.name)
+                    # Select and make object active
+                    SelectActive(self.import_to_scene_models)
+
+
+
+
+
+
+
+
+def SetScene(list):
+
+
 
 def CheckArgs():
     print('HEYYYYYYYYYYYYYYYYYYYYYYYYYY')
@@ -202,72 +287,14 @@ def CheckArgs():
     print('texture_path is ' + sys.argv[11])
 
 
-def Import(path, object_extension, name):
-    candidate_object = path
 
 
-    if object_extension == 'obj':
-        bpy.ops.import_scene.obj(filepath=candidate_object)
-
-    elif object_extension == 'fbx':
-        bpy.ops.import_scene.fbx(filepath=candidate_object)
-
-    elif object_extension == 'gltf' or object_extension == 'glb':
-        bpy.ops.import_scene.gltf(filepath=candidate_object)
-
-    elif object_extension == 'stl':
-        bpy.ops.import_mesh.stl(filepath=candidate_object)
-
-    elif object_extension == 'ply':
-        bpy.ops.import_scene.ply(filepath=candidate_object)
-
-    elif object_extension == '3ds':
-        bpy.ops.import_scene.autodesk_3ds(filepath=candidate_object)
-
-    elif object_extension == 'dae':
-        bpy.ops.wm.collada_import(filepath=candidate_object)
-
-def CheckMultiScene():
-    list_scenes = bpy.data.scenes
-    if len(list_scenes)>1:
-        SetScene(list_scenes)
-
-    else:
-        pass
-
-    scene = bpy.context.scene
-    bpy.context.scene.render.engine = 'CYCLES'
-    # print (scene.name)
-
-    return scene
-
-def GetModel(scene):
-    # WE NEED TO SELECT ALL MESHES IF THEY ARE PLURAL
-    all_objects = scene.objects
-    models = []
-
-    if len(all_objects)>1:
-        list_objects = []
-        for object in scene.objects:
-            # print(object.name)
-            if object.type == 'MESH' and 'RootNode' not in object.name:
-                list_objects.append(object)
-
-        # CheckList(list_objects)
-
-        for object in list_objects:
-             bpy.data.objects[object.name].select = True
-             models.append(object.name)
-
-    else:
-        for object in scene.objects:
-            if object.type == 'MESH' and 'RootNode' not in object.name:
-                models.append(object.name)
-                # Select and make object active
-                SelectActive(models)
-
-
-    return models
+#
+# def GetModel(scene):
+#
+#
+#
+#     return models
 
 def SelectActive(object):
     bpy.ops.object.select_all( action='DESELECT' )
