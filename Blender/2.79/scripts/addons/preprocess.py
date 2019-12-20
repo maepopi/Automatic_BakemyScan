@@ -10,61 +10,13 @@ import argparse
 
 def Run():
 
+
     # scene = bpy.context.scene
     # bpy.context.scene.render.engine = 'CYCLES'
 
 
     # GETTING THE VARIABLES SENT BY BATCH
     args = DefineArguments()
-
-
-    class DefineArguments():
-        root_path = None
-        object_path = None
-        object_name = None
-        object_extension = None
-        image_extension = None
-        output_path = None
-        multitexture = None
-        texture_path = None
-        argv = None
-        parser = None
-        args = None
-
-        def __init__(self):
-            self.GetBatchArgs()
-
-            self.root_path = self.args.inputFullPath
-            self.object_path = self.args.processedInputPath
-            self.object_name = self.args.name
-            self.object_extension = self.args.objectExtension
-            self.image_extension = self.args.imageExtension
-            self.output_path = self.args.preprocessOutputPath
-            self.multitexture = self.args.multitexture
-            self.texture_path = self.args.texturePath
-
-
-
-
-        def GetBatchArgs(self):
-            self.argv = sys.argv[sys.argv.index("--") + 1:]
-            parser = argparse.ArgumentParser()
-
-            parser.add_argument("-ifp", "--inputFullPath", help="Full path of the input object")
-            parser.add_argument("-pip", "--processedInputPath", help="Path of the object once processed")
-            parser.add_argument("-n", "--name", help="Name of the object")
-            parser.add_argument("-oe", "--objectExtension", help="Extension of the object")
-            parser.add_argument("-ie", "--imageExtension", help="Extension of the texture")
-            parser.add_argument("-pop", "--preprocessOutputPath", help="Preprocessed object output path")
-            parser.add_argument("-mt", "--multitexture", help="Object has multitexture")
-            parser.add_argument("-tp", "--texturePath", help="Path of the texture")
-
-            self.args = parser.parse_args(self.argv)
-
-
-
-
-
 
 
 
@@ -86,7 +38,6 @@ def Run():
     models.extend(GetModel(scene))
 
     # CheckList(models)
-
     # CheckObj(scene)
 
 
@@ -110,7 +61,6 @@ def Run():
             has_multi_texture = GetMaterialAmount(single_model)
 
 
-
     # PROCEEED ACCORDING TO PREVIOUS RESULT
     if has_multi_texture:
         clean_object = MultiTextureProcess(single_model, object_name, object_extension, texture_path, output_path, scene, bake_resolution)
@@ -122,6 +72,58 @@ def Run():
 
     Export(clean_object, object_name, output_path)
 
+
+class DefineArguments():
+        root_path = None
+        object_path = None
+        object_name = None
+        object_extension = None
+        image_extension = None
+        output_path = None
+        multitexture = None
+        texture_path = None
+        args = None
+
+        def __init__(self):
+            self.GetBatchArgs()
+            self.root_path = self.args.inputFullPath
+            self.object_path = self.args.processedInputPath
+            self.object_name = self.args.name
+            self.object_extension = self.args.objectExtension
+            self.image_extension = self.args.imageExtension
+            self.output_path = self.args.preprocessOutputPath
+            self.multitexture = self.args.multitexture
+            self.texture_path = self.args.texturePath
+
+
+
+        def GetBatchArgs(self):
+            self.argv = sys.argv[sys.argv.index("--") + 1:]
+            parser = argparse.ArgumentParser()
+
+            parser.add_argument("-ifp", "--inputFullPath", help="Full path of the input object")
+            parser.add_argument("-pip", "--processedInputPath", help="Path of the object once processed")
+            parser.add_argument("-n", "--name", help="Name of the object")
+            parser.add_argument("-oe", "--objectExtension", help="Extension of the object")
+            parser.add_argument("-ie", "--imageExtension", help="Extension of the texture")
+            parser.add_argument("-pop", "--preprocessOutputPath", help="Preprocessed object output path")
+            parser.add_argument("-mt", "--multitexture", help="Object has multitexture")
+            parser.add_argument("-tp", "--texturePath", help="Path of the texture")
+
+            self.args = parser.parse_args(self.argv)
+
+# class SingleTextureProcess():
+#     single_texture_object = None
+#     single_texture_name = None
+#     single_texture_object_extension = None
+#     single_texture_output_path = None
+#     single_texture_texture_path = None
+#     single_texture_scene = None
+#     single_texture_image_extension = None
+#     single_texture_root_path = None
+#
+#     def __init__(self):
+#
 
 def SetScene(list):
     for i in range (len(list)):

@@ -7,26 +7,7 @@ import glob
 import sys
 import argparse
 
-#Passage en Cycles
-bpy.context.scene.render.engine = 'CYCLES'
 
-
-
-
-def Run():
-
-    # GET THE BATCH ARGUMENTS
-    args = DefineArguments()
-    # DEFINE THE OBJECTS AND TEXTURES TO BE IMPORTED
-    obj_list = []
-    obj_list.append(args.rootfolder)
-    model = Import(obj_list)
-    active_object = Select(model)
-    # Applying the material to the object
-    # I'm calling the class that will construct the material. See in the class for more comments
-    current_material = Material(active_object, args.roughness_value, args.specular_value, args.diffuse_path, args.normal_path)
-    active_object.data.materials[0] = current_material.mat
-    Export(active_object, args.export_path, args.export_name)
 
 
 class DefineArguments():
@@ -39,8 +20,6 @@ class DefineArguments():
     normal_resolution = None
     specular_value = None
     roughness_value = None
-    argv = None
-    parser = None
     args = None
 
     def __init__(self):
@@ -70,29 +49,6 @@ class DefineArguments():
         parser.add_argument("-nr", "--normalResolution", help="resolution of the normal texture")
 
         self.args = parser.parse_args(argv)
-
-
-
-
-def Import(obj_list):
-    model = None
-    for item_path in obj_list:
-        candidate_object= item_path
-        bpy.ops.import_scene.obj(filepath = candidate_object)
-
-    return model
-    
-
-def Select(object):
-    ma_scene = bpy.context.scene
-    for un_objet in ma_scene.objects:
-        if un_objet.type == 'MESH':
-            bpy.context.scene.objects.active = un_objet
-
-    curr_object = bpy.context.active_object
-
-    return curr_object
-
 
 class Material():
     # As in any other script, we need to define the variables that will be used in this class, even if they are not assigned to anything yet
@@ -182,6 +138,27 @@ class Material():
 
         # link_all= links.new(BSDF.outputs[0], nodes.get("Material Output").inputs[0])
 
+
+def Import(obj_list):
+    model = None
+    for item_path in obj_list:
+        candidate_object= item_path
+        bpy.ops.import_scene.obj(filepath = candidate_object)
+
+    return model
+    
+
+def Select(object):
+    ma_scene = bpy.context.scene
+    for un_objet in ma_scene.objects:
+        if un_objet.type == 'MESH':
+            bpy.context.scene.objects.active = un_objet
+
+    curr_object = bpy.context.active_object
+
+    return curr_object
+
+
 def Export(object, export_path, export_name):
     export_filepath = os.path.join(export_path, export_name)
 
@@ -190,6 +167,22 @@ def Export(object, export_path, export_name):
     bpy.ops.export_scene.gltf(filepath=export_filepath, export_format="GLB", export_selected=True)
     # bpy.ops.object.delete()
 
+
+def Run():
+    # Passage en Cycles
+    bpy.context.scene.render.engine = 'CYCLES'
+    # GET THE BATCH ARGUMENTS
+    args = DefineArguments()
+    # DEFINE THE OBJECTS AND TEXTURES TO BE IMPORTED
+    obj_list = []
+    obj_list.append(args.rootfolder)
+    model = Import(obj_list)
+    active_object = Select(model)
+    # Applying the material to the object
+    # I'm calling the class that will construct the material. See in the class for more comments
+    current_material = Material(active_object, args.roughness_value, args.specular_value, args.diffuse_path, args.normal_path)
+    active_object.data.materials[0] = current_material.mat
+    Export(active_object, args.export_path, args.export_name)
 
         
 
