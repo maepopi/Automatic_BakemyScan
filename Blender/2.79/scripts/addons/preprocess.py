@@ -9,14 +9,14 @@ import argparse
 
 
 def Run():
-
-
+    # INITIALIZING THE SCENE
     scene = bpy.context.scene
     bpy.context.scene.render.engine = 'CYCLES'
 
-
     # GETTING THE VARIABLES SENT BY BATCH
     args = DefineArguments()
+
+
 
     # DECLARING PYTHON VARIABLES
     # Change this resolution for a higher value if you have a better computer. But the higher the longer the object will be to process.
@@ -30,44 +30,44 @@ def Run():
 
     # IMPORT THE OBJECT
     # Use extend here to add each argument of the list to the models list as an individual. If you use append and append a list to a list, the appeneded list will be appended as an object but with all the values together, not separated.
-    import_process = ImportToScene()
+    import_process = ImportToScene(args.object_path, args.object_extension, args.object_name, scene)
     scene = import_process.import_to_scene_scene
     models = import_process.import_to_scene_models
 
+    # DEBUG OPTIONS TO CHECK THE MODELS AND SCENE
     # CheckList(models)
     # CheckObj(scene)
 
-
-    # MAKE SURE THE OBJECT IS JOINED AND INDEPENDENT IN THE SCENE
-    single_model = MakeSingular(models, scene, object_name)
+    single_model_process = MakeSingular(models, scene, args.object_name)
+    single_model = single_model_process.make_singular_single_object
 
     # PLACE THE OBJECT AT THE CENTER AND FREEZE TRANSFORM
     Place(single_model)
 
     # CHECK WHETHER THE OBJECT HAS MULTITEXTURES OR NOT
-    if multitexture == 'Yes':
+    if args.multitexture == 'Yes':
         has_multi_texture = True
 
 
-    elif multitexture == 'No':
+    elif args.multitexture == 'No':
         has_multi_texture = False
 
 
-        if object_extension == 'gltf' or object_extension == 'glb':
+        if args.object_extension == 'gltf' or args.object_extension == 'glb':
             # In the case of a gltf or glb object, we can't separate the textures in the color folder. The only way to check whether the object has several textures then is to analyze its materials.
             has_multi_texture = GetMaterialAmount(single_model)
 
 
     # PROCEEED ACCORDING TO PREVIOUS RESULT
     if has_multi_texture:
-        clean_object = MultiTextureProcess(single_model, object_name, object_extension, texture_path, output_path, scene, bake_resolution)
+        clean_object = MultiTextureProcess(single_model, args.object_name, args.object_extension, args.texture_path, args.output_path, scene, bake_resolution)
 
     else:
-        single_texture_process = SingleTextureProcess()
+        single_texture_process = SingleTextureProcess(single_model, args.object_name, args.object_extension, args.output_path, args.texture_path, scene, args.image_extension, args.root_path)
         clean_object = single_texture_process.single_texture_clean_object
 
 
-    Export(clean_object, object_name, output_path)
+    Export(clean_object, args.object_name, args.output_path)
 
 
 class DefineArguments():
@@ -120,7 +120,7 @@ class SingleTextureProcess():
     single_texture_root_path = None
     single_texture_clean_object = None
 
-    def __init__(self):
+    def __init__(self, object, name, object_extension, output_path, texture_path, scene, image_extension, root_path):
         self.single_texture_object = object
         self.single_texture_name = name
         self.single_texture_object_extension = object_extension
@@ -128,9 +128,9 @@ class SingleTextureProcess():
         self.single_texture_texture_path = texture_path
         self.single_texture_scene = scene
         self.single_texture_image_extension = image_extension
-        self.single_texture_root_path = rootpath
+        self.single_texture_root_path = root_path
 
-        self.CleanGeometry()
+        CleanGeometry(self.single_texture_object)
         self.ProcessTextures()
 
         self.single_texture_clean_object = self.single_texture_object
@@ -140,8 +140,8 @@ class SingleTextureProcess():
         destination_path = None
 
         if self.single_texture_object_extension != 'gltf' and self.single_texture_object_extension != 'glb':
-            image_path = os.path.join(self.single_texture_root_path, name + '_color' + self.single_texture_image_extension)
-            destination_path = os.path.join(self.single_texture_output_path, self.single_texture_name + '_color' + self.single_texture_image_extension)
+            image_path = os.path.join(self.single_texture_root_path, self.single_texture_name + '_color' + "." + self.single_texture_image_extension)
+            destination_path = os.path.join(self.single_texture_output_path, self.single_texture_name + '_color' + "." + self.single_texture_image_extension)
             origin_path = image_path
             # print('HEYYYYYY TEXTURE PATH IS ' + texture_path)
             # print('HEYYYYYY ORIGIN PATH IS ' + origin_path)
@@ -186,7 +186,7 @@ class ImportToScene():
     import_to_scene_scene = None
     import_to_scene_models = []
 
-    def __init__(self):
+    def __init__(self, object_path, object_extension, object_name, scene):
         self.import_to_scene_object_path = object_path
         self.import_to_scene_object_extension = object_extension
         self.import_to_scene_object_name = object_name
@@ -201,30 +201,30 @@ class ImportToScene():
     def Import(self):
         candidate_object = self.import_to_scene_object_path
 
-        if object_extension == 'obj':
+        if self.import_to_scene_object_extension == 'obj':
             bpy.ops.import_scene.obj(filepath=candidate_object)
 
-        elif object_extension == 'fbx':
+        elif self.import_to_scene_object_extension == 'fbx':
             bpy.ops.import_scene.fbx(filepath=candidate_object)
 
-        elif object_extension == 'gltf' or object_extension == 'glb':
+        elif self.import_to_scene_object_extension == 'gltf' or self.import_to_scene_object_extension == 'glb':
             bpy.ops.import_scene.gltf(filepath=candidate_object)
 
-        elif object_extension == 'stl':
+        elif self.import_to_scene_object_extension == 'stl':
             bpy.ops.import_mesh.stl(filepath=candidate_object)
 
-        elif object_extension == 'ply':
+        elif self.import_to_scene_object_extension == 'ply':
             bpy.ops.import_scene.ply(filepath=candidate_object)
 
-        elif object_extension == '3ds':
+        elif self.import_to_scene_object_extension == '3ds':
             bpy.ops.import_scene.autodesk_3ds(filepath=candidate_object)
 
-        elif object_extension == 'dae':
+        elif self.import_to_scene_object_extension == 'dae':
             bpy.ops.wm.collada_import(filepath=candidate_object)
 
     def CheckMultiScene(self):
         self.list_scenes = bpy.data.scenes
-        if len(list_scenes)>1:
+        if len(self.list_scenes)>1:
             SetScene()
 
         else:
@@ -264,14 +264,69 @@ class ImportToScene():
                     # Select and make object active
                     SelectActive(self.import_to_scene_models)
 
+        return self.import_to_scene_models
+
+class MakeSingular():
+    make_singular_objects = None
+    make_singular_scene = None
+    make_singular_object_name = None
+    make_singular_object_list = []
+    make_singular_single_object = None
+
+    def __init__(self, objects, scene, object_name):
+        self.make_singular_objects = objects
+        self.make_singular_scene = scene
+        self.make_singular_object_name = object_name
+
+        self.make_singular_object_list = self.CheckParent()
+        self.make_singular_single_object = self.CheckSeparate()
 
 
+    def CheckParent(self):
+        objects_in_scene = []
+        # print('OBJECTS' + str(objects))
+
+        for i in range(len(self.make_singular_objects)):
+            name = self.make_singular_objects[i]
+            object = bpy.data.objects[name]
+            bpy.data.objects[name].select = True
+            objects_in_scene.append(name)
+
+            # Checking if parented
+            if object.parent:
+                matrixcopy = object.matrix_world.copy()
+                object.parent = None
+                object.matrix_world = matrixcopy
+
+        return objects_in_scene
 
 
+    def CheckSeparate(self):
+        model = None
+        list = self.make_singular_object_list
+        if len(list) > 1:
+            for i in range(len(list)):
+                name = list[i]
+                bpy.data.objects[name].select = True
+                bpy.context.scene.objects.active = bpy.data.objects[name]
 
+            bpy.ops.object.join()
 
+            for object in self.make_singular_scene.objects:
 
-def SetScene(list):
+                if object.type == 'MESH' and 'RootNode' not in object.name:
+                    # print("HEYYYYY I AM HERE" + object.name)
+                    bpy.data.objects[object.name].name = self.make_singular_object_name
+                    model = bpy.data.objects[object.name]
+
+        else:
+            for object in self.make_singular_scene.objects:
+                if object.type == 'MESH' and 'RootNode' not in object.name:
+                    bpy.data.objects[object.name].name = model_name
+
+                    model = bpy.data.objects[object.name]
+
+        return model
 
 
 
@@ -289,13 +344,6 @@ def CheckArgs():
 
 
 
-#
-# def GetModel(scene):
-#
-#
-#
-#     return models
-
 def SelectActive(object):
     bpy.ops.object.select_all( action='DESELECT' )
     bpy.data.objects[object.name].select = True
@@ -310,60 +358,7 @@ def CheckList(list):
         print( 'FIIIIIIIIIILELIST IS ' + str(i))
 
 
-def MakeSingular(objects, scene, object_name):
-    # print("HEYY CHECKING LIST")
-    # CheckList(objects)
-    object_list = CheckParent(objects, scene)
-    object = CheckSeparate(objects, object_list, scene, object_name)
 
-    return object
-
-def CheckParent(objects, scene):
-    objects_in_scene = []
-    # print('OBJECTS' + str(objects))
-
-    for i in range (len(objects)):
-        name = objects[i]
-        object = bpy.data.objects[name]
-        bpy.data.objects[name].select = True
-        objects_in_scene.append(name)
-
-        #Checking if parented
-        if object.parent:
-            matrixcopy = object.matrix_world.copy()
-            object.parent = None
-            object.matrix_world = matrixcopy
-
-    # print(str(objects_in_scene))
-    return objects_in_scene
-
-def CheckSeparate(object, list, scene, model_name):
-    model = None
-    if len(list) > 1:
-        for i in range(len(list)):
-            name = list[i]
-            bpy.data.objects[name].select = True
-            bpy.context.scene.objects.active = bpy.data.objects[name]
-
-        bpy.ops.object.join()
-
-        for object in scene.objects:
-
-            if object.type == 'MESH' and 'RootNode' not in object.name:
-                # print("HEYYYYY I AM HERE" + object.name)
-                bpy.data.objects[object.name].name = model_name
-                model = bpy.data.objects[object.name]
-
-    else:
-        for object in scene.objects:
-            if object.type == 'MESH' and 'RootNode' not in object.name:
-                bpy.data.objects[object.name].name = model_name
-
-                model = bpy.data.objects[object.name]
-
-    return model
-
-    # print('OBJECT NAME ISSSSS ' + bpy.data.objects[object.name].name)
 
 def Place(object):
     SelectActive(object)
