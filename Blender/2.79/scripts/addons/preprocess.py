@@ -10,36 +10,63 @@ import argparse
 
 def Run():
 
-    scene = bpy.context.scene
-    bpy.context.scene.render.engine = 'CYCLES'
+    # scene = bpy.context.scene
+    # bpy.context.scene.render.engine = 'CYCLES'
 
 
     # GETTING THE VARIABLES SENT BY BATCH
-    argv = sys.argv[sys.argv.index("--") + 1:]
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("-ifp","--inputFullPath", help="Full path of the input object")
-    parser.add_argument("-pip","--processedInputPath", help="Path of the object once processed")
-    parser.add_argument("-n", "--name", help="Name of the object")
-    parser.add_argument("-oe","--objectExtension", help="Extension of the object")
-    parser.add_argument("-ie","--imageExtension", help="Extension of the texture")
-    parser.add_argument("-pop","--preprocessOutputPath", help="Preprocessed object output path")
-    parser.add_argument("-mt","--multitexture", help="Object has multitexture")
-    parser.add_argument("-tp","--texturePath", help="Path of the texture")
-
-    args = parser.parse_args(argv)
+    args = DefineArguments()
 
 
+    class DefineArguments():
+        root_path = None
+        object_path = None
+        object_name = None
+        object_extension = None
+        image_extension = None
+        output_path = None
+        multitexture = None
+        texture_path = None
+        argv = None
+        parser = None
+        args = None
+
+        def __init__(self):
+            self.GetBatchArgs()
+
+            self.root_path = self.args.inputFullPath
+            self.object_path = self.args.processedInputPath
+            self.object_name = self.args.name
+            self.object_extension = self.args.objectExtension
+            self.image_extension = self.args.imageExtension
+            self.output_path = self.args.preprocessOutputPath
+            self.multitexture = self.args.multitexture
+            self.texture_path = self.args.texturePath
 
 
-    root_path = args.inputFullPath
-    object_path = args.processedInputPath
-    object_name = args.name
-    object_extension = args.objectExtension
-    image_extension = args.imageExtension
-    output_path = args.preprocessOutputPath
-    multitexture = args.multitexture
-    texture_path = args.texturePath
+
+
+        def GetBatchArgs(self):
+            self.argv = sys.argv[sys.argv.index("--") + 1:]
+            parser = argparse.ArgumentParser()
+
+            parser.add_argument("-ifp", "--inputFullPath", help="Full path of the input object")
+            parser.add_argument("-pip", "--processedInputPath", help="Path of the object once processed")
+            parser.add_argument("-n", "--name", help="Name of the object")
+            parser.add_argument("-oe", "--objectExtension", help="Extension of the object")
+            parser.add_argument("-ie", "--imageExtension", help="Extension of the texture")
+            parser.add_argument("-pop", "--preprocessOutputPath", help="Preprocessed object output path")
+            parser.add_argument("-mt", "--multitexture", help="Object has multitexture")
+            parser.add_argument("-tp", "--texturePath", help="Path of the texture")
+
+            self.args = parser.parse_args(self.argv)
+
+
+
+
+
+
+
 
     # DECLARING PYTHON VARIABLES
     # Change this resolution for a higher value if you have a better computer. But the higher the longer the object will be to process.
