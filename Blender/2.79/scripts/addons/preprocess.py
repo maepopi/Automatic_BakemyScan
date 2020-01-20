@@ -68,10 +68,15 @@ class SingleTextureProcess():
         self.single_texture_image_extension = image_extension
         self.single_texture_root_path = root_path
 
-        CleanGeometry(self.single_texture_object)
+        self.CleanGeometry()
         self.ProcessTextures()
 
         self.single_texture_clean_object = self.single_texture_object
+
+    def CleanGeometry(self):
+        object = self.single_texture_object
+        Triangulate(object)
+
 
     def ProcessTextures(self):
         image_path = None
@@ -411,18 +416,10 @@ class MultiTextureProcess():
 
     def CleanGeometry(self):
         object = self.lowpoly
-        self.Triangulate()
+        Triangulate(object)
         # No need to remove doubles, it is done in the bakemyscan script (invalid clnors message), but it works with this function if needed.
         # RemoveDoubles(object)
 
-    def Triangulate(self):
-        object = self.lowpoly
-        object_data = object.data
-        bm = bmesh.new()
-        bm.from_mesh(object_data)
-        bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
-        bm.to_mesh(object_data)
-        bm.free()
 
     def Unwrap(self):
         object = self.lowpoly
@@ -548,6 +545,15 @@ def SelectActive(object):
     bpy.ops.object.select_all( action='DESELECT' )
     bpy.data.objects[object.name].select = True
     bpy.context.scene.objects.active = bpy.data.objects[object.name]
+
+def Triangulate(model):
+    object = model
+    object_data = object.data
+    bm = bmesh.new()
+    bm.from_mesh(object_data)
+    bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
+    bm.to_mesh(object_data)
+    bm.free()
 
 def CheckObj(scene):
     for object in scene.objects:
