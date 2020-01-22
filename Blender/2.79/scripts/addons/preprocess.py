@@ -123,20 +123,26 @@ class SingleTextureProcess():
         image.save()
 
 class ImportToScene():
+    import_to_scene_rootpath = None
     import_to_scene_object_path = None
     import_to_scene_object_extension = None
     import_to_scene_object_name = None
     import_to_scene_scene = None
     import_to_scene_models = []
+    import_to_scene_animation_data = None
 
-    def __init__(self, object_path, object_extension, object_name, scene):
+    def __init__(self, object_path, object_extension, object_name, scene, rootpath):
+        self.import_to_scene_rootpath = rootpath
         self.import_to_scene_object_path = object_path
         self.import_to_scene_object_extension = object_extension
         self.import_to_scene_object_name = object_name
         self.import_to_scene_scene = scene
 
+
         self.Import()
         self.CheckMultiScene()
+
+        self.import_to_scene_animation_data = self.CheckAnimation()
 
         self.import_to_scene_models.extend(self.GetModel())
 
@@ -165,6 +171,9 @@ class ImportToScene():
         elif self.import_to_scene_object_extension == 'dae':
             bpy.ops.wm.collada_import(filepath=candidate_object)
 
+
+
+
     def CheckMultiScene(self):
         self.list_scenes = bpy.data.scenes
         if len(self.list_scenes)>1:
@@ -184,6 +193,40 @@ class ImportToScene():
             for obj in self.import_to_scene_scene.objects:
                 if obj.name != 'RootNode' and obj.type == 'MESH':
                     bpy.context.window.screen.scene = bpy.data.scenes[self.import_to_scene_scene.name]
+
+
+    def CheckAnimation(self):
+        scene = self.import_to_scene_scene
+
+        for obj in scene.objects:
+            if obj.type == 'ARMATURE':
+                print('HEYYYYYY Thats an armature!')
+                filepath = self.WriteThatFile(True)
+
+            else:
+                print('HEYYYYY RAS')
+
+
+
+    def WriteThatFile(self, bool):
+        animation_data_path = self.import_to_scene_rootpath
+
+        filename = 'animated.txt'
+
+        self.filepath = os.path.join(animation_data_path, filename)
+
+        if self.filepath is not None:
+            f = open(self.filepath, 'w+')
+
+        else:
+            f = open(self.filepath, 'x')
+
+
+        f.close()
+
+        return self.filepath
+
+
 
     def GetModel(self):
         # WE NEED TO SELECT ALL MESHES IF THEY ARE PLURAL
@@ -636,13 +679,14 @@ def Run():
 
     # IMPORT THE OBJECT
     # Use extend here to add each argument of the list to the models list as an individual. If you use append and append a list to a list, the appeneded list will be appended as an object but with all the values together, not separated.
-    import_process = ImportToScene(args.object_path, args.object_extension, args.object_name, scene)
+    import_process = ImportToScene(args.object_path, args.object_extension, args.object_name, scene, args.root_path)
     scene = import_process.import_to_scene_scene
     models = import_process.import_to_scene_models
 
     # DEBUG OPTIONS TO CHECK THE MODELS AND SCENE
     # CheckList(models)
     # CheckObj(scene)
+
 
     single_model_process = MakeSingular(models, scene, args.object_name)
     single_model = single_model_process.make_singular_single_object
@@ -662,6 +706,7 @@ def Run():
         if args.object_extension == 'gltf' or args.object_extension == 'glb':
             # In the case of a gltf or glb object, we can't separate the textures in the color folder. The only way to check whether the object has several textures then is to analyze its materials.
             has_multi_texture = GetMaterialAmount(single_model)
+
 
 
     # PROCEEED ACCORDING TO PREVIOUS RESULT

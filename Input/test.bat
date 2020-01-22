@@ -171,6 +171,11 @@ set outPath=%1\..\..\Output\%name%\%target_indicator%\%name%.obj
 
 ren %outPath% %name%_Mesh_%target_indicator%.obj
 
+REM On doit récupérer l'objet original s'il a une animation + faut aussi se souvenir de son extension
+
+set oldObjectPath=%processInPath%
+set oldPath=%inputFullPath%
+
 set newPath=%1\..\..\Output\%name%\%target_indicator%\%name%_Mesh_%target_indicator%.obj
 
 
@@ -185,7 +190,8 @@ set exportpath=%outputFullPath%\Glb
 set exportname=%name%_Mesh_%hightarget%_%diffuse_resolution%-%normal_resolution%
 
 
-%blenderPath% -b -P %convertScriptPath% -- -np %newPath% -dp %diffusepath% -nop %normalpath% -ep %exportpath% -en %exportname% -dr %diffuse_resolution% -nr %normal_resolution%
+REM il faut envoyer aussi le oldpath
+%blenderPath% -P %convertScriptPath% -- -op %oldPath% -oop %oldObjectPath% -np %newPath% -dp %diffusepath% -nop %normalpath% -ep %exportpath% -en %exportname% -dr %diffuse_resolution% -nr %normal_resolution%
 
 
 

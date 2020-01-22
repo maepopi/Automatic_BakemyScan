@@ -20,13 +20,19 @@ class DefineArguments():
     normal_resolution = None
     specular_value = None
     roughness_value = None
+    original_object_path = None
+    original_object_extension = None
+    original_path = None
     args = None
 
     def __init__(self):
         self.GetBatchArgs()
 
         # We need to put "self" before the variables, because we want the variables of the class, not new variables specific to the function
-        self.rootfolder = self.args.newPath
+
+        self.original_object_path = self.args.oldObjectPath
+        self.original_path = self.args.oldPath
+        self.decimated_object = self.args.newPath
         self.diffuse_path = self.args.diffusePath
         self.normal_path = self.args.normalPath
         self.export_path = self.args.exportPath
@@ -40,6 +46,9 @@ class DefineArguments():
         argv = sys.argv[sys.argv.index("--") + 1:]
         parser = argparse.ArgumentParser()
 
+
+        parser.add_argument("-op", "--oldPath", help='original rootpath')
+        parser.add_argument("-oop", "--oldObjectPath", help="path of the original object without decimation")
         parser.add_argument("-np", "--newPath", help="path of the object to convert")
         parser.add_argument("-dp", "--diffusePath", help="path for the diffuse texture")
         parser.add_argument("-nop", "--normalPath", help="path for the normal texture")
@@ -139,14 +148,193 @@ class Material():
         # link_all= links.new(BSDF.outputs[0], nodes.get("Material Output").inputs[0])
 
 
-def Import(obj_list):
-    model = None
-    for item_path in obj_list:
-        candidate_object= item_path
-        bpy.ops.import_scene.obj(filepath = candidate_object)
 
-    return model
-    
+class ImportProcess():
+
+    import_process_obj_list = []
+    import_process_isAnimated = None
+    import_process_animation_data_path = None
+    import_process_original_path = None
+    import_process_original_object_path = None
+    import_process_decimated_path = None
+    import_process_animated_object = []
+    import_process_decimated_object = None
+
+    def __init__(self, original_path, original_object_path, decimated_path):
+
+        self.import_process_animated_object = []
+        self.import_process_decimated_object = None
+        self.import_process_decimated_path = decimated_path
+        self.import_process_original_path = original_path
+        self.import_process_original_object_path = original_object_path
+        self.import_process_animation_data_path = os.path.join(original_path, 'animated.txt')
+
+
+        self.import_process_isAnimated = self.CheckAnimation()
+
+        if self.import_process_isAnimated:
+            self.import_process_obj_list.append(self.import_process_decimated_path)
+            self.import_process_decimated_object = self.Import_object()
+            self.import_process_obj_list.clear()
+            self.import_process_obj_list.append(self.import_process_original_object_path)
+            self.import_process_animated_object = self.Import_object()
+
+
+
+        # else :
+        #     self.import_process_obj_list.append(self.import_process_decimated_path)
+        #
+        #     self.import_process_decimated_object = self.Import_object()
+        #
+        #     self.import_process_animated_object = None
+
+
+
+    def CheckAnimation(self):
+        if os.path.exists(self.import_process_animation_data_path):
+            self.import_process_isAnimated = True
+
+        else:
+            self.import_process_isAnimated = False
+
+        return self.import_process_isAnimated
+
+
+
+    def Import_object(self):
+
+        scene = bpy.context.scene
+        list = self.import_process_obj_list
+        model = []
+
+
+
+
+        for item_path in list:
+            candidate_object = item_path
+            # We have to extract the extension from the name of candidate_object
+
+            filename, file_extension = os.path.splitext(candidate_object)
+
+
+            if file_extension == '.obj':
+                bpy.ops.import_scene.obj(filepath=candidate_object)
+
+            elif file_extension == '.fbx':
+                bpy.ops.import_scene.fbx(filepath=candidate_object)
+
+            elif file_extension == '.gltf' or file_extension == '.glb':
+                bpy.ops.import_scene.gltf(filepath=candidate_object)
+
+            elif file_extension == '.stl':
+                bpy.ops.import_mesh.stl(filepath=candidate_object)
+
+            elif file_extension == '.ply':
+                bpy.ops.import_scene.ply(filepath=candidate_object)
+
+            elif file_extension == '.3ds':
+                bpy.ops.import_scene.autodesk_3ds(filepath=candidate_object)
+
+            elif file_extension == '.dae':
+                bpy.ops.wm.collada_import(filepath=candidate_object)
+
+
+        # If the scene is empty, then we're importing the decimation object and we can directly add it to the model list
+        if self.import_process_decimated_object is None:
+            # print("HEYYY IVE JUST IMPORTED THE DECIMATED")
+            for obj in scene.objects:
+                if obj.type == 'MESH' and 'RootNode' not in obj.name:
+                    model.append(bpy.data.objects[obj.name])
+                    # print("HEYYY THE DECIMATED IS " + str(model))
+
+
+        # If the scene is not empty, it means we're importing the animated object AFTER the decimated one, so we must ask to add only the objects
+        # which are not already in the scene, that is to say the decimated object that was previously stored in the self.import_process_decimated_object variable
+        else:
+            # print("HEYYY IVE JUST IMPORTED THE ANIMATED")
+            for obj in scene.objects:
+                if obj.type == 'MESH' and 'RootNode' not in obj.name and obj not in self.import_process_decimated_object:
+                    model.append(bpy.data.objects[obj.name])
+
+            # print("HEYYY THE ANIMATED LIST Is " + str(model))
+
+
+
+
+
+        return model
+
+
+class BuildAnimation():
+    decimated_object = None
+    animated_objects = []
+    final_animated_object = None
+    decimated_mesh_data = None
+    animated_mesh_data = None
+
+    def __init__(self, decimated, animated):
+
+        self.decimated_object = decimated
+
+        for i in animated:
+            self.animated_objects.append(i)
+
+
+        # Now we need to delete all the animated objects except the armature of course AND one object (no matter which)
+        self.final_animated_object = self.CleanAnimated()
+
+
+        # We just need to get the decimated mesh data in order to replace the animated mesh's data
+        self.SwapData()
+
+
+
+    def CleanAnimated (self) :
+        scene = bpy.context.scene
+        list = self.animated_objects
+        clean_animated = None
+
+        for i in range (len(list) - 1):
+            if list[i].type is not "ARMATURE":
+                bpy.ops.object.select_all(action="DESELECT")
+                bpy.data.objects[list[i].name].select = True
+                bpy.ops.object.delete()
+
+        for obj in scene.objects:
+            if obj.type == "MESH" and obj not in self.decimated_object:
+                clean_animated = bpy.data.objects[obj.name]
+                print("HEYYY CLEAN ANIMATED IS " + str(clean_animated))
+
+        return clean_animated
+
+
+    def SwapData (self) :
+        decimate = self.decimated_object[0]
+        animated = self.final_animated_object
+
+        # print("HEYYYYY DECIMATE IS" + str(decimate))
+        # print("HEYYYYY ANIMATE IS" + str(animated))
+
+
+        decimated_mesh_data = decimate.data
+        animated.data = decimated_mesh_data
+        bpy.ops.object.select_all(action="DESELECT")
+        bpy.data.objects[decimate.name].select = True
+        bpy.ops.object.delete()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def Select(object):
     ma_scene = bpy.context.scene
@@ -169,20 +357,50 @@ def Export(object, export_path, export_name):
 
 
 def Run():
+    decimated_object = None
+    animated_object = []
+    length = None
+    object = None
+
     # Passage en Cycles
     bpy.context.scene.render.engine = 'CYCLES'
     # GET THE BATCH ARGUMENTS
     args = DefineArguments()
     # DEFINE THE OBJECTS AND TEXTURES TO BE IMPORTED
     obj_list = []
-    obj_list.append(args.rootfolder)
-    model = Import(obj_list)
-    active_object = Select(model)
-    # Applying the material to the object
-    # I'm calling the class that will construct the material. See in the class for more comments
-    current_material = Material(active_object, args.roughness_value, args.specular_value, args.diffuse_path, args.normal_path)
-    active_object.data.materials[0] = current_material.mat
-    Export(active_object, args.export_path, args.export_name)
+
+    # THIS IS WHERE WE CHECK IF THE OBJECT IS ANIMATED, AND THUS HOW MANY OBJECTS WE HAVE TO IMPORT
+    import_process = ImportProcess(args.original_path, args.original_object_path, args.decimated_object)
+    decimated_object = import_process.import_process_decimated_object
+
+     # We iterate through the list of objects we got from the class. So [i] each time represents an object.
+    for i in import_process.import_process_animated_object:
+        animated_object.append(i)
+
+
+    build_animation = BuildAnimation(decimated_object, animated_object)
+    animated_object = build_animation.final_animated_object
+
+    # # if isAnimated :
+    # #     obj_list.append(args.rootfolder, args.original_object_path)
+    # #
+    # # else:
+    # #     obj_list.append(args.rootfolder)
+    # #
+    # #
+    # # model = Import(obj_list)
+    #
+    # active_object = Select(model)
+    # # Applying the material to the object
+    # # I'm calling the class that will construct the material. See in the class for more comments
+    # current_material = Material(active_object, args.roughness_value, args.specular_value, args.diffuse_path, args.normal_path)
+    # active_object.data.materials[0] = current_material.mat
+    #
+    # # We now need to restore the animation of the object if there was one
+    #
+    #
+    #
+    # Export(active_object, args.export_path, args.export_name)
 
         
 
