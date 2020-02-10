@@ -55,9 +55,9 @@ class export_mesh(bpy.types.Operator, ExportHelper):
         bpy.ops.mesh.quads_convert_to_tris(quad_method='BEAUTY', ngon_method='BEAUTY')
         bpy.ops.object.editmode_toggle()
 
-        #Get the mesh, with the modifiers and transformations applied
-        mesh = obj.to_mesh(context.scene, True, 'PREVIEW')
-        mesh.transform(obj.matrix_world)
+        # #Get the mesh, with the modifiers and transformations applied
+        # mesh = obj.to_mesh(context.scene, True, 'PREVIEW')
+        # mesh.transform(obj.matrix_world)
 
         #Get the relevant mesh information
         verts     = [[v.co[0], v.co[1], v.co[2], 0] for v in mesh.vertices[:]]

@@ -102,24 +102,24 @@ class clean_object(bpy.types.Operator):
             if self.shade:
                 bpy.ops.object.shade_smooth()
 
-            #Center
-            if self.center:
-                bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
-                bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
-                bpy.ops.object.origin_set(type='GEOMETRY_ORIGIN')
-                bpy.ops.object.transform_apply(location=True, rotation=False, scale=False)
+            # #Center
+            # if self.center:
+            #     bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+            #     bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
+            #     bpy.ops.object.origin_set(type='GEOMETRY_ORIGIN')
+            #     bpy.ops.object.transform_apply(location=True, rotation=False, scale=False)
+            #
+            # #Scale
+            # if self.scale:
+            #     s = 1.0/(max(max(obj.dimensions[0], obj.dimensions[1]), obj.dimensions[2]))
+            #     obj.scale = [s,s,s]
+            #     bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
 
-            #Scale
-            if self.scale:
-                s = 1.0/(max(max(obj.dimensions[0], obj.dimensions[1]), obj.dimensions[2]))
-                obj.scale = [s,s,s]
-                bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-
-            #Zoom on it
-            for area in bpy.context.screen.areas:
-                if area.type == 'VIEW_3D':
-                    override = {'area': area, 'region': area.regions[-1]}
-                    bpy.ops.view3d.view_selected(override, use_all_regions=False)
+            # #Zoom on it
+            # for area in bpy.context.screen.areas:
+            #     if area.type == 'VIEW_3D':
+            #         override = {'area': area, 'region': area.regions[-1]}
+            #         bpy.ops.view3d.view_selected(override, use_all_regions=False)
 
         self.report({'INFO'}, 'Pre-processing complete')
         return{'FINISHED'}

@@ -57,7 +57,7 @@ class BaseRemesher(bpy.types.Operator):
         self.initialobject   = context.active_object
         self.existingobjects = [o for o in bpy.data.objects]
         bpy.ops.object.mode_set(mode='OBJECT')
-        bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+        # bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
         #Operators working on a duplicated object
         if self.workonduplis:
             bpy.ops.object.duplicate()

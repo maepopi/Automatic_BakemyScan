@@ -323,19 +323,6 @@ class BuildAnimation():
         bpy.ops.object.delete()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 def Select(object):
     ma_scene = bpy.context.scene
     for un_objet in ma_scene.objects:
@@ -373,13 +360,13 @@ def Run():
     import_process = ImportProcess(args.original_path, args.original_object_path, args.decimated_object)
     decimated_object = import_process.import_process_decimated_object
 
-     # We iterate through the list of objects we got from the class. So [i] each time represents an object.
-    for i in import_process.import_process_animated_object:
-        animated_object.append(i)
-
-
-    build_animation = BuildAnimation(decimated_object, animated_object)
-    animated_object = build_animation.final_animated_object
+    #  # We iterate through the list of objects we got from the class. So [i] each time represents an object.
+    # for i in import_process.import_process_animated_object:
+    #     animated_object.append(i)
+    #
+    #
+    # build_animation = BuildAnimation(decimated_object, animated_object)
+    # animated_object = build_animation.final_animated_object
 
     # # if isAnimated :
     # #     obj_list.append(args.rootfolder, args.original_object_path)

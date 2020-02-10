@@ -68,12 +68,15 @@ class SingleTextureProcess():
         self.single_texture_image_extension = image_extension
         self.single_texture_root_path = root_path
 
+        print("HEYYY SINGLE TEXTURE OBJECT IS " + str(self.single_texture_object))
+
         self.CleanGeometry()
         self.ProcessTextures()
 
         self.single_texture_clean_object = self.single_texture_object
 
     def CleanGeometry(self):
+        # print("HEYY SINGLE TEXTURE CLEAN GEOMETRY OF OBJECT " + self.single_texture_object)
         object = self.single_texture_object
         Triangulate(object)
 
@@ -130,6 +133,8 @@ class ImportToScene():
     import_to_scene_scene = None
     import_to_scene_models = []
     import_to_scene_animation_data = None
+    import_to_scene_is_animated = None
+
 
     def __init__(self, object_path, object_extension, object_name, scene, rootpath):
         self.import_to_scene_rootpath = rootpath
@@ -137,6 +142,9 @@ class ImportToScene():
         self.import_to_scene_object_extension = object_extension
         self.import_to_scene_object_name = object_name
         self.import_to_scene_scene = scene
+        self.import_to_scene_is_animated = None
+
+
 
 
         self.Import()
@@ -144,7 +152,7 @@ class ImportToScene():
 
         self.import_to_scene_animation_data = self.CheckAnimation()
 
-        self.import_to_scene_models.extend(self.GetModel())
+        self.GetModel()
 
 
     def Import(self):
@@ -202,9 +210,16 @@ class ImportToScene():
             if obj.type == 'ARMATURE':
                 print('HEYYYYYY Thats an armature!')
                 filepath = self.WriteThatFile(True)
+                self.import_to_scene_is_animated = True
+                return filepath
+
+
 
             else:
                 print('HEYYYYY RAS')
+                self.import_to_scene_is_animated = False
+
+
 
 
 
@@ -238,7 +253,7 @@ class ImportToScene():
                 # print(object.name)
                 if object.type == 'MESH' and 'RootNode' not in object.name:
                     bpy.data.objects[object.name].select = True
-                    self.import_to_scene_models.append(object.name)
+                    self.import_to_scene_models.append(bpy.data.objects[object.name])
 
             # CheckList(list_objects)
 
@@ -246,11 +261,11 @@ class ImportToScene():
         else:
             for object in self.import_to_scene_scene.objects:
                 if object.type == 'MESH' and 'RootNode' not in object.name:
-                    self.import_to_scene_models.append(object.name)
+                    self.import_to_scene_models.append(bpy.data.objects[object.name])
                     # Select and make object active
                     SelectActive(self.import_to_scene_models)
 
-        return self.import_to_scene_models
+
 
 class MakeSingular():
     make_singular_objects = None
@@ -264,8 +279,12 @@ class MakeSingular():
         self.make_singular_scene = scene
         self.make_singular_object_name = object_name
 
+
+
         self.make_singular_object_list = self.CheckParent()
         self.make_singular_single_object = self.CheckSeparate()
+
+        # print("HEYYY MAKE SINGULAR " + str(self.make_singular_single_object))
 
 
     def CheckParent(self):
@@ -273,16 +292,16 @@ class MakeSingular():
         # print('OBJECTS' + str(objects))
 
         for i in range(len(self.make_singular_objects)):
-            name = self.make_singular_objects[i]
-            object = bpy.data.objects[name]
-            bpy.data.objects[name].select = True
-            objects_in_scene.append(name)
+            object= self.make_singular_objects[i]
+            bpy.data.objects[object.name].select = True
+            objects_in_scene.append(object.name)
 
             # Checking if parented
             if object.parent:
-                matrixcopy = object.matrix_world.copy()
-                object.parent = None
-                object.matrix_world = matrixcopy
+                bpy.ops.object.parent_clear(type='CLEAR_KEEP_TRANSFORM')
+                # matrixcopy = object.matrix_world.copy()
+                # object.parent = None
+                # object.matrix_world = matrixcopy
 
         return objects_in_scene
 
@@ -308,9 +327,14 @@ class MakeSingular():
         else:
             for object in self.make_singular_scene.objects:
                 if object.type == 'MESH' and 'RootNode' not in object.name:
-                    bpy.data.objects[object.name].name = model_name
+                    bpy.data.objects[object.name].name = self.make_singular_object_name
 
                     model = bpy.data.objects[object.name]
+
+        # We need to rename the joined object with the object name, because it might take another name during the join process
+        model.name = self.make_singular_object_name
+
+
 
         return model
 
@@ -572,6 +596,14 @@ class MultiTextureProcess():
         image.file_format = 'PNG'
         image.save()
 
+def Unparent(objects):
+    object_list = objects
+
+    for i in object_list:
+        object = bpy.data.objects[i.name]
+        if object.parent:
+            bpy.ops.object.parent_clear(type='CLEAR_KEEP_TRANSFORM')
+
 
 def CheckArgs():
     print('HEYYYYYYYYYYYYYYYYYYYYYYYYYY')
@@ -585,18 +617,43 @@ def CheckArgs():
     print('texture_path is ' + sys.argv[11])
 
 def SelectActive(object):
+
     bpy.ops.object.select_all( action='DESELECT' )
-    bpy.data.objects[object.name].select = True
-    bpy.context.scene.objects.active = bpy.data.objects[object.name]
+
+
+    if type(object) == list:
+        for i in object:
+
+            bpy.data.objects[i.name].select = True
+            bpy.context.scene.objects.active = bpy.data.objects[i.name]
+
+    else :
+        bpy.data.objects[object.name].select = True
+        bpy.context.scene.objects.active = bpy.data.objects[object.name]
+
 
 def Triangulate(model):
     object = model
-    object_data = object.data
-    bm = bmesh.new()
-    bm.from_mesh(object_data)
-    bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
-    bm.to_mesh(object_data)
-    bm.free()
+
+    if type(object) == list:
+        for ob in object:
+            print(bpy.data.objects[ob.name])
+            # object_data = ob.data
+            # bm = bmesh.new()
+            # bm.from_mesh(object_data)
+            # bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
+            # bm.to_mesh(object_data)
+            # bm.free()
+
+    else:
+        object_data = object.data
+        print(bpy.data.objects[object.name])
+        # bm = bmesh.new()
+        # bm.from_mesh(object_data)
+        # bmesh.ops.triangulate(bm, faces=bm.faces[:], quad_method=0, ngon_method=0)
+        # bm.to_mesh(object_data)
+        # bm.free()
+
 
 def CheckObj(scene):
     for object in scene.objects:
@@ -648,6 +705,7 @@ def RemoveDoubles(object):
 
 
 def Export(object, name, path):
+
     SelectActive(object)
     export_filepath = os.path.join(path, name + '_clean' + '.obj')
     bpy.ops.export_scene.obj(filepath=export_filepath, use_selection=True)
@@ -683,16 +741,37 @@ def Run():
     scene = import_process.import_to_scene_scene
     models = import_process.import_to_scene_models
 
+    print("HEYYYYYY PATH IS " + str(import_process.import_to_scene_animation_data))
+
+    if os.path.exists(import_process.import_to_scene_animation_data):
+        isAnimated = True
+
+    else :
+        isAnimated = False
+
+    # Unparent(models)
+    single_model_process = MakeSingular(models, scene, args.object_name)
+    single_model = single_model_process.make_singular_single_object
+    single_model.name = single_model_process.make_singular_object_name
+
+
+    print("HEY RUN MAIN " + str(single_model))
+
     # DEBUG OPTIONS TO CHECK THE MODELS AND SCENE
     # CheckList(models)
     # CheckObj(scene)
 
 
-    single_model_process = MakeSingular(models, scene, args.object_name)
-    single_model = single_model_process.make_singular_single_object
+    if isAnimated == False:
 
-    # PLACE THE OBJECT AT THE CENTER AND FREEZE TRANSFORM
-    Place(single_model)
+
+        # PLACE THE OBJECT AT THE CENTER AND FREEZE TRANSFORM
+        Place(single_model)
+
+
+# Ok this may seem weird, but it's just in case we must not merge and unparent the objects of the scene for the future
+    models = single_model
+
 
     # CHECK WHETHER THE OBJECT HAS MULTITEXTURES OR NOT
     if args.multitexture == 'Yes':
@@ -705,17 +784,17 @@ def Run():
 
         if args.object_extension == 'gltf' or args.object_extension == 'glb':
             # In the case of a gltf or glb object, we can't separate the textures in the color folder. The only way to check whether the object has several textures then is to analyze its materials.
-            has_multi_texture = GetMaterialAmount(single_model)
+            has_multi_texture = GetMaterialAmount(models)
 
 
 
     # PROCEEED ACCORDING TO PREVIOUS RESULT
     if has_multi_texture:
-        multi_texture_process = MultiTextureProcess(single_model, args.object_name, args.object_extension, args.texture_path, args.output_path, bake_resolution, scene)
+        multi_texture_process = MultiTextureProcess(models, args.object_name, args.object_extension, args.texture_path, args.output_path, bake_resolution, scene)
         clean_object = multi_texture_process.clean_object
 
     else:
-        single_texture_process = SingleTextureProcess(single_model, args.object_name, args.object_extension, args.output_path, args.texture_path, scene, args.image_extension, args.root_path)
+        single_texture_process = SingleTextureProcess(models, args.object_name, args.object_extension, args.output_path, args.texture_path, scene, args.image_extension, args.root_path)
         clean_object = single_texture_process.single_texture_clean_object
 
 
