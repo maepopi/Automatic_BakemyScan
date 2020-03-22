@@ -168,7 +168,7 @@ class ImportToScene():
     def CheckMultiScene(self):
         self.list_scenes = bpy.data.scenes
         if len(self.list_scenes)>1:
-            SetScene()
+            self.SetScene()
 
         else:
             pass
