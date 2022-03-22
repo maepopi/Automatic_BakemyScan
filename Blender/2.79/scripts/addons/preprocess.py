@@ -548,6 +548,7 @@ class MultiTextureProcess():
         scene = self.multi_texture_process_scene
 
         SelectActive(lowpoly)
+
         bpy.ops.object.duplicate(linked=False, mode='TRANSLATION')
         cage = None
 
@@ -592,9 +593,9 @@ class MultiTextureProcess():
         bpy.ops.object.bake(type='DIFFUSE', pass_filter={'COLOR'}, filepath=filepath, use_selected_to_active=True,
                             use_cage=True, cage_object=cage.name)
 
-        image.filepath_raw = os.path.join(output_path, baked_color.name + '.png')
-        image.file_format = 'PNG'
-        image.save()
+
+
+
 
 def Unparent(objects):
     object_list = objects
