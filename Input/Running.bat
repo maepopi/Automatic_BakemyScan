@@ -152,9 +152,9 @@ set colorPath=D:\Maelys\Tableaudebord\GITHUB_PROJECTS\2019_AUTOMATIC_BAKEMYSCAN\
 set method=DECIMATE
 
 
-set diffuse_resolution=512
-set normal_resolution=512
-set target=2500
+set diffuse_resolution=2048
+set normal_resolution=1024
+set target=4000
 
 mkdir D:\Maelys\Tableaudebord\GITHUB_PROJECTS\2019_AUTOMATIC_BAKEMYSCAN\Automatic_BakemyScan\Input\cupcake\..\..\Output\%name%\%target%
 set outFolder=D:\Maelys\Tableaudebord\GITHUB_PROJECTS\2019_AUTOMATIC_BAKEMYSCAN\Automatic_BakemyScan\Input\cupcake\..\..\Output\%name%\%target%

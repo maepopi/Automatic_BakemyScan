@@ -5,6 +5,7 @@ import sys
 import os
 import shutil
 import subprocess
+import time
 
 
 class MyWindow(QMainWindow):
@@ -17,7 +18,7 @@ class MyWindow(QMainWindow):
     def initUI(self):
         #Define a "latest path" text file
         self.this_script_path = os.path.realpath(__file__)
-        self.plugin_start_path = os.path.dirname(self.this_script_path)
+        self.plugin_path = os.path.dirname(self.this_script_path)
         self.default_path_file = os.path.join(self.this_script_path, '..', 'default_path.txt')
         if os.path.exists(self.default_path_file):
             print("Found the default path file")
@@ -30,10 +31,9 @@ class MyWindow(QMainWindow):
         else:
             print("default file not found")
             self.file = open(self.default_path_file, "w+")
-            self.file.write(self.plugin_start_path)
-            self.default_path = self.plugin_start_path
+            self.file.write(self.plugin_path)
+            self.default_path = self.plugin_path
             self.file.close()
-
 
 
         #Connect the Plugin input button to browser
@@ -58,13 +58,14 @@ class MyWindow(QMainWindow):
         self.normres_comboBox = self.ui.normres_comboBox
         self.normres_comboBox.currentIndexChanged.connect(self.getNormComboValue)
 
-        #Declare the progress bar
-        self.progressBar = self.ui.progressBar
-             
+    
         #At last connect the decimate button, which will essentially send all the data to the ObjectDataClass
         self.decimate_button = self.ui.decimate_button
-        self.decimate_button.clicked.connect(self.processBatch)
+        self.decimate_button.clicked.connect(self.start)
 
+        #Console display
+        self.consoleText = self.ui.plainTextEdit
+        
 
     
     #Ideally we should find a way to put arguments directly inside the function called into clicked.connect. Here we have to actually separate what we 
@@ -115,8 +116,9 @@ class MyWindow(QMainWindow):
         
 
         if string is "Object":
+            #◙I'm deleting gltf as there is currently a problem at import (maybe the importer is too old)
             fname = QFileDialog.getOpenFileName(self, "Choose your file", "", 
-            "Obj Files (*.obj);;Fbx Files (*.fbx);; glTF Files (*.gltf) ;; GLB Files (*.glb);; STL Files (*.stl) ;; PLY Files (*.ply) ;; 3ds Files (*.3ds);; DAE Files (*.dae)")[0]
+            "Obj Files (*.obj);;Fbx Files (*.fbx);; GLB Files (*.glb);; STL Files (*.stl) ;; PLY Files (*.ply) ;; 3ds Files (*.3ds);; DAE Files (*.dae)")[0]
             if fname:
                 self.object_path = fname
                 self.object_folder = os.path.dirname(fname)
@@ -154,12 +156,21 @@ class MyWindow(QMainWindow):
     # This function will allow, for now, to just change a few parameters in the batch script that used to be launched manually. Ideally,
     # the whold batch script should be rewritten through Python with variables. See Flag_Generator script.
 
-    #Following works. Now we need to make sure it works in a copy of the batch
+
+
+    def start(self):
+        self.consoleText.setPlainText("Processing your object, please wait...")
+        self.processBatch()
+
     def processBatch(self):
+        
+
         self.batch_script = self.writeBatch()
         self.launchBatch(self.batch_script)
         self.cleanBatch(self.batch_script)
-    
+        self.consoleText.setPlainText("Your object has been processed, you will find it in the Output folder :)")
+     
+        
 
     def writeBatch(self):
         #Copy the batch file
@@ -208,6 +219,8 @@ class MyWindow(QMainWindow):
         #Launch bat. The process_wait() makes sure that all the images are done.
         process  = subprocess.Popen(script)
         process.wait()
+
+
 
     def cleanBatch(self,script):
         os.remove(script)
