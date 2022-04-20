@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(['Automatic_BakeMyScan.py'],
-             pathex=['D:\\Maelys\\Tableaudebord\\Automatic_BakemyScan'],
+             pathex=[],
              binaries=[],
              datas=[],
              hiddenimports=[],

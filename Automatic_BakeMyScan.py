@@ -1,11 +1,13 @@
 
+from distutils.util import convert_path
 from PySide2.QtWidgets import QApplication, QMainWindow, QFileDialog, QLineEdit
 from GUI_BMS import Ui_MainWindow
+from default_path import default_path, default_path_file
 import sys
 import os
 import shutil
 import subprocess
-import time
+
 
 
 class MyWindow(QMainWindow):
@@ -17,28 +19,36 @@ class MyWindow(QMainWindow):
 
     def initUI(self):
         #Define a "latest path" text file
-        self.this_script_path = os.path.realpath(__file__)
-        self.plugin_path = os.path.dirname(self.this_script_path)
-        self.default_path_file = os.path.join(self.this_script_path, '..', 'default_path.txt')
-        if os.path.exists(self.default_path_file):
-            print("Found the default path file")
-            self.file = open(self.default_path_file, "r")
-            self.file_lines = self.file.readlines()
-            self.default_path = self.file_lines[0]
-            print("the default path is " + str(self.default_path))
-            self.file.close()
+        #Works only if called through the py script, not exe
+        # self.plugin_path = os.path.dirname(self.this_script_path)
+        # self.default_path_file = os.path.join(self.this_script_path, '..', 'default_path.txt')
+        # if os.path.exists(self.default_path_file):
+        #     print("Found the default path file")
+        #     self.file = open(self.default_path_file, "r")
+        #     self.file_lines = self.file.readlines()
+        #     self.default_path = self.file_lines[0]
+        #     print("the default path is " + str(self.default_path))
+        #     self.file.close()
         
-        else:
-            print("default file not found")
-            self.file = open(self.default_path_file, "w+")
-            self.file.write(self.plugin_path)
-            self.default_path = self.plugin_path
-            self.file.close()
+        # else:
+        #     print("default file not found")
+        #     self.file = open(self.default_path_file, "w+")
+        #     self.file.write(self.plugin_path)
+        #     self.default_path = self.plugin_path
+        #     self.file.close()
 
+        self.default_path = default_path
+        self.default_path_file = default_path_file
+        print("default path file" + default_path_file)
 
         #Connect the Plugin input button to browser
         self.plugin_input_button = self.ui.plugin_input_button
-        self.plugin_input_button.setText(self.default_path)
+    
+
+        if default_path != None:
+            self.plugin_input_button.setText(self.default_path)
+
+        
         self.plugin_input_button.clicked.connect(self.browsePlugin)
         
 
@@ -91,26 +101,31 @@ class MyWindow(QMainWindow):
                     self.plugin_path = foldername
                     self.default_path = self.plugin_path
 
+                    self.default_path = self.convertPath(self.default_path)
+                
                     print("plugin path is " + self.default_path)
 
                     #Here we make sure the last location chosen will become the default location at the next iteration
                     file = open(self.default_path_file, "r+")
-                    
-                
-                    for line in file:
-                        print("I'm analyzing the content of the file")
-                        if self.plugin_path not in line:
+                    replacement = ""
 
-                            print(self.plugin_path  + " is not in the file")
-                            file.seek(0)
-                            file.write(self.plugin_path)
-                            file.truncate()
-                        
+                    for line in file :
+                        if "default_path =" in line :
+                            print("Found line to be changed")
+                            if self.default_path not in line:
+                                changes = line.replace("None", '"' + self.default_path + '"')
+                                replacement = replacement + changes
+                            else:
+                                print("Path identical, no changes made")
+
                         else:
-                            print('Path is identical, no changes made')
-                    
-                    
-                    self.file.close()
+                            replacement = replacement + line
+
+            
+                    file.close()
+                    fout = open(self.default_path_file, "w")
+                    fout.write(replacement)
+                    fout.close()
                 
                     
         
