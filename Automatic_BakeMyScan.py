@@ -1,10 +1,14 @@
 
-from PySide2.QtWidgets import QApplication, QMainWindow, QFileDialog, QLineEdit
+from codecs import ignore_errors
+from PySide2.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PySide2 import QtCore
+from PySide2.QtCore import QProcess
 from GUI_BMS import Ui_MainWindow
 import sys
 import os
 import shutil
 import subprocess
+import time
 
 
 class MyWindow(QMainWindow):
@@ -17,7 +21,7 @@ class MyWindow(QMainWindow):
     def initUI(self):
         #Define a "latest path" text file
         self.this_script_path = os.path.realpath(__file__)
-        self.plugin_start_path = os.path.dirname(self.this_script_path)
+        self.plugin_path = os.path.dirname(self.this_script_path)
         self.default_path_file = os.path.join(self.this_script_path, '..', 'default_path.txt')
         if os.path.exists(self.default_path_file):
             print("Found the default path file")
@@ -30,8 +34,8 @@ class MyWindow(QMainWindow):
         else:
             print("default file not found")
             self.file = open(self.default_path_file, "w+")
-            self.file.write(self.plugin_start_path)
-            self.default_path = self.plugin_start_path
+            self.file.write(self.plugin_path)
+            self.default_path = self.plugin_path
             self.file.close()
 
 
@@ -58,8 +62,9 @@ class MyWindow(QMainWindow):
         self.normres_comboBox = self.ui.normres_comboBox
         self.normres_comboBox.currentIndexChanged.connect(self.getNormComboValue)
 
-        #Declare the progress bar
-        self.progressBar = self.ui.progressBar
+        #Processing message
+        self.processMessage = self.ui.plainTextEdit
+        self.process = None
              
         #At last connect the decimate button, which will essentially send all the data to the ObjectDataClass
         self.decimate_button = self.ui.decimate_button
@@ -150,6 +155,8 @@ class MyWindow(QMainWindow):
         # print ("resolution is " + str(self.res))
         return self.res
 
+    def message(self, s):
+        self.processMessage.appendPlainText(s)
 
     # This function will allow, for now, to just change a few parameters in the batch script that used to be launched manually. Ideally,
     # the whold batch script should be rewritten through Python with variables. See Flag_Generator script.
@@ -157,8 +164,12 @@ class MyWindow(QMainWindow):
     #Following works. Now we need to make sure it works in a copy of the batch
     def processBatch(self):
         self.batch_script = self.writeBatch()
-        self.launchBatch(self.batch_script)
-        self.cleanBatch(self.batch_script)
+
+        self.launchProcess(self.batch_script)
+        
+
+        # self.launchBatch(self.batch_script)
+        # 
     
 
     def writeBatch(self):
@@ -204,10 +215,41 @@ class MyWindow(QMainWindow):
 
         return self.batch_script
 
+    def launchProcess(self, script):
+        
+        self.processed_script = self.convertPath(script)
+        print("script path is " + script)
+
+        self.process = QProcess()
+        self.process.setProcessChannelMode(QtCore.QProcess.MergedChannels)
+        self.process.readyReadStandardOutput.connect(self.workReply)
+        self.process.finished.connect(self.workFinished)
+        self.process.setProgram("cmd.exe")
+        self.process.setArguments({"/c", r"("+self.processed_script+")"})
+        self.process.start()
+        self.process.waitForStarted()
+
+    def workReply(self):
+        data = self.process.readAllStandardOutput().data()
+        ch = str(data, encoding='utf-8').rstrip()
+        print(ch)
+        self.message(ch)
+    
+    def workFinished(self):
+        if self.process != None:
+            self.process.readyReadStandardOutput.disconnect()
+            self.process.finished.disconnect()
+            self.message("The process is done :)")
+            # self.cleanBatch(self.processed_script)
+            
+            
+
     def launchBatch(self, script):
         #Launch bat. The process_wait() makes sure that all the images are done.
+        
         process  = subprocess.Popen(script)
-        process.wait()
+        process.wait()   
+        
 
     def cleanBatch(self,script):
         os.remove(script)
@@ -219,11 +261,6 @@ class MyWindow(QMainWindow):
 
         return path
     
-        
-
-
-        #deduce the other back end data
-
         
 
 
