@@ -144,14 +144,14 @@ class Ui_MainWindow(object):
         self.diffres_comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"512", None))
         self.diffres_comboBox.setItemText(3, QCoreApplication.translate("MainWindow", u"1024", None))
         self.diffres_comboBox.setItemText(4, QCoreApplication.translate("MainWindow", u"2048", None))
-        self.diffres_comboBox.setItemText(5, QCoreApplication.translate("MainWindow", u"4098", None))
+        self.diffres_comboBox.setItemText(5, QCoreApplication.translate("MainWindow", u"4096", None))
 
         self.normres_comboBox.setItemText(0, QCoreApplication.translate("MainWindow", u"Choose the resolution", None))
         self.normres_comboBox.setItemText(1, QCoreApplication.translate("MainWindow", u"256", None))
         self.normres_comboBox.setItemText(2, QCoreApplication.translate("MainWindow", u"512", None))
         self.normres_comboBox.setItemText(3, QCoreApplication.translate("MainWindow", u"1024", None))
         self.normres_comboBox.setItemText(4, QCoreApplication.translate("MainWindow", u"2048", None))
-        self.normres_comboBox.setItemText(5, QCoreApplication.translate("MainWindow", u"4098", None))
+        self.normres_comboBox.setItemText(5, QCoreApplication.translate("MainWindow", u"4096", None))
 
         self.normres_comboBox.setCurrentText(QCoreApplication.translate("MainWindow", u"Choose the resolution", None))
         self.menuAutomatic_Bakemyscan.setTitle(QCoreApplication.translate("MainWindow", u"Automatic Bakemyscan", None))
