@@ -10,3 +10,7 @@
 *.pyc
 *.bin
 *.pyc
+
+
+/Tests
+/old
