@@ -10,7 +10,7 @@ This tutorial presents a small program we have developed thanks to <a href="http
 
 I simply turned it into an independant plugin you can launch through a python app. There's also a "manual" process that allows you to drag and drop a folder containing your object and its diffuse texture on top of a batch script.
 
-I also have developed a version of this plugin which allows you to simply **drag and drop an object** on a script, and it will **automatically process it** and export five different versions of the decimated object, from very low poly (1 500 triangles) to relatively high (120 000 triangles). This is currently broken though, I'll have to fix it later. For now, please use the app.
+I also have developed a version of this plugin which allows you to simply **drag and drop an object** on a script, and it will **automatically process it** and export five different versions of the decimated object, from very low poly (1 500 triangles) to relatively high (120 000 triangles). 
 
 # Installation
 1. Clone the repo
@@ -43,3 +43,9 @@ In the same folder, you now have to put your diffuse texture, that is to say the
 5. Hit "Decimate". When your object is ready, it will be in the "Output" folder.
 
 
+## Through the batch script
+You can drag and drop your folder containing your object to decimate directly onto the **Automatic_Bake_Batch_Resolution.bat** script. This will result in outputting different decimated versions of your object, in the "Output" folder.
+
+>Note:
+> 
+> The "Output" folder contains a folder with the name of your processed object. For example "Cat". Inside this folder, you have a "GLB" folder which contains the GLB outputs of your model. Alongside this "GLB" folder, you have different folders named with the deximation target ("verylow", "low" etc.) which each contains the obj version of the object, alongside the unpacked textures.
