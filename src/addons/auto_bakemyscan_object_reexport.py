@@ -170,6 +170,17 @@ def Export(object, export_path, export_name):
 def Run():
     # Passage en Cycles
     bpy.context.scene.render.engine = 'CYCLES'
+
+    #CLEANING THE SCENE
+    bpy.ops.object.select_all(action='DESELECT')
+
+    # Select all objects
+    bpy.ops.object.select_all(action='SELECT')
+
+    # Delete all selected objects
+    bpy.ops.object.delete()
+
+
     # GET THE BATCH ARGUMENTS
     args = DefineArguments()
     # DEFINE THE OBJECTS AND TEXTURES TO BE IMPORTED

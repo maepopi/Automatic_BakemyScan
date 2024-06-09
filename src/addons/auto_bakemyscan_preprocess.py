@@ -86,9 +86,6 @@ class SingleTextureProcess():
             image_path = os.path.join(self.single_texture_root_path, self.single_texture_name + '_color' + "." + self.single_texture_image_extension)
             destination_path = os.path.join(self.single_texture_output_path, self.single_texture_name + '_color' + "." + self.single_texture_image_extension)
             origin_path = image_path
-            # print('HEYYYYYY TEXTURE PATH IS ' + texture_path)
-            # print('HEYYYYYY ORIGIN PATH IS ' + origin_path)
-            # print('HEYYYYYY DESTINATION PATH IS ' + destination_path)
             shutil.copy(origin_path, destination_path)
 
         else:
@@ -135,10 +132,16 @@ class ImportToScene():
         self.import_to_scene_object_name = object_name
         self.import_to_scene_scene = scene
 
+
+        self.clean_scene()
         self.Import()
         self.CheckMultiScene()
 
         self.import_to_scene_models.extend(self.GetModel())
+
+    def clean_scene(self):
+       bpy.ops.object.select_all(action='SELECT')
+       bpy.ops.object.delete()
 
 
     def Import(self):
@@ -165,6 +168,7 @@ class ImportToScene():
         elif self.import_to_scene_object_extension == 'dae':
             bpy.ops.wm.collada_import(filepath=candidate_object)
 
+
     def CheckMultiScene(self):
         self.list_scenes = bpy.data.scenes
         if len(self.list_scenes)>1:
@@ -175,7 +179,7 @@ class ImportToScene():
 
         self.import_to_scene_scene = bpy.context.scene
         bpy.context.scene.render.engine = 'CYCLES'
-        # print (scene.name)
+
 
     def SetScene(self):
         list = self.list_scenes
@@ -186,28 +190,21 @@ class ImportToScene():
                     bpy.context.window.screen.scene = bpy.data.scenes[self.import_to_scene_scene.name]
 
     def GetModel(self):
-        # WE NEED TO SELECT ALL MESHES IF THEY ARE PLURAL
+        models = []
         all_objects = self.import_to_scene_scene.objects
 
-        #We start by making a list of all the objects in the scene
         if len(all_objects) > 1:
-            for object in self.import_to_scene_scene.objects:
-                # print(object.name)
-                if object.type == 'MESH' and 'RootNode' not in object.name:
-                    bpy.data.objects[object.name].select = True
-                    self.import_to_scene_models.append(object.name)
-
-            # CheckList(list_objects)
-
-
+            for obj in all_objects:
+                if obj.type == 'MESH' and 'RootNode' not in obj.name:
+                    obj.select = True
+                    models.append(obj.name)
         else:
-            for object in self.import_to_scene_scene.objects:
-                if object.type == 'MESH' and 'RootNode' not in object.name:
-                    self.import_to_scene_models.append(object.name)
-                    # Select and make object active
-                    SelectActive(self.import_to_scene_models)
+            for obj in all_objects:
+                if obj.type == 'MESH' and 'RootNode' not in obj.name:
+                    models.append(obj.name)
+                    SelectActive(obj)  # Ensuring we call SelectActive on individual objects
 
-        return self.import_to_scene_models
+        return models
 
 class MakeSingular():
     make_singular_objects = None
@@ -246,28 +243,23 @@ class MakeSingular():
 
     def CheckSeparate(self):
         model = None
-        list = self.make_singular_object_list
-        if len(list) > 1:
-            for i in range(len(list)):
-                name = list[i]
+        if len(self.make_singular_object_list) > 1:
+            for name in self.make_singular_object_list:
                 bpy.data.objects[name].select = True
                 bpy.context.scene.objects.active = bpy.data.objects[name]
 
             bpy.ops.object.join()
 
-            for object in self.make_singular_scene.objects:
-
-                if object.type == 'MESH' and 'RootNode' not in object.name:
-                    # print("HEYYYYY I AM HERE" + object.name)
-                    bpy.data.objects[object.name].name = self.make_singular_object_name
-                    model = bpy.data.objects[object.name]
+            for obj in self.make_singular_scene.objects:
+                if obj.type == 'MESH' and 'RootNode' not in obj.name:
+                    obj.name = self.make_singular_object_name
+                    model = obj
 
         else:
-            for object in self.make_singular_scene.objects:
-                if object.type == 'MESH' and 'RootNode' not in object.name:
-                    bpy.data.objects[object.name].name = model_name
-
-                    model = bpy.data.objects[object.name]
+            for obj in self.make_singular_scene.objects:
+                if obj.type == 'MESH' and 'RootNode' not in obj.name:
+                    obj.name = self.make_singular_object_name
+                    model = obj
 
         return model
 
@@ -541,10 +533,10 @@ def CheckArgs():
     print('multitexture is ' + sys.argv[10])
     print('texture_path is ' + sys.argv[11])
 
-def SelectActive(object):
-    bpy.ops.object.select_all( action='DESELECT' )
-    bpy.data.objects[object.name].select = True
-    bpy.context.scene.objects.active = bpy.data.objects[object.name]
+def SelectActive(obj):
+    bpy.ops.object.select_all(action='DESELECT')
+    obj.select = True
+    bpy.context.scene.objects.active = obj
 
 def Triangulate(model):
     object = model
@@ -595,7 +587,6 @@ def GetMaterialAmount(object):
     else:
         return False
 
-    # print ('HEYYYYYYYYYYY ' + str( has_multi_texture ))
 
 def RemoveDoubles(object):
     bpy.ops.object.editmode_toggle()
@@ -619,9 +610,9 @@ def Run():
     scene = bpy.context.scene
     bpy.context.scene.render.engine = 'CYCLES'
 
+
     # GETTING THE VARIABLES SENT BY BATCH
     args = DefineArguments()
-
 
 
     # DECLARING PYTHON VARIABLES
@@ -630,9 +621,6 @@ def Run():
     has_multi_texture = None
     models = []
 
-    # CHECK THE ARGUMENT LIST
-    # Debug purposes, keep this commented otherwise
-    # CheckArgs()
 
     # IMPORT THE OBJECT
     # Use extend here to add each argument of the list to the models list as an individual. If you use append and append a list to a list, the appeneded list will be appended as an object but with all the values together, not separated.
@@ -640,9 +628,6 @@ def Run():
     scene = import_process.import_to_scene_scene
     models = import_process.import_to_scene_models
 
-    # DEBUG OPTIONS TO CHECK THE MODELS AND SCENE
-    # CheckList(models)
-    # CheckObj(scene)
 
     single_model_process = MakeSingular(models, scene, args.object_name)
     single_model = single_model_process.make_singular_single_object
@@ -650,7 +635,7 @@ def Run():
     # PLACE THE OBJECT AT THE CENTER AND FREEZE TRANSFORM
     Place(single_model)
 
-    # CHECK WHETHER THE OBJECT HAS MULTITEXTURES OR NOT
+    # CHECK WHETHER THE OBJECT HAS MULTITEXTURES OR NOT - change this! it must be True or False without having to pass through an intermediate value
     if args.multitexture == 'Yes':
         has_multi_texture = True
 
